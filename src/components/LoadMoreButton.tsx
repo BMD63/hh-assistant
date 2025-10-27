@@ -2,10 +2,17 @@ interface LoadMoreButtonProps {
   onLoadMore: () => void;
   isLoading: boolean;
   hasMore: boolean;
+  show: boolean; // Условие показа
 }
 
-export function LoadMoreButton({ onLoadMore, isLoading, hasMore }: LoadMoreButtonProps) {
-  if (!hasMore) return null;
+export function LoadMoreButton({ 
+  onLoadMore, 
+  isLoading, 
+  hasMore, 
+  show 
+}: LoadMoreButtonProps) {
+  // Не показываем если не нужно или нет больше данных
+  if (!show || !hasMore) return null;
 
   return (
     <div className="text-center mt-8">

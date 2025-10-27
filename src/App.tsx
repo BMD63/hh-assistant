@@ -14,6 +14,9 @@ function App() {
     searchVacancies(query, 0);
   });
 
+  // Условия для показа кнопки "Загрузить еще"
+  const showLoadMore = vacancies.length > 0 && hasMore;
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -51,6 +54,16 @@ function App() {
               </div>
             )}
 
+            {/* Статистика найденных вакансий */}
+            {vacancies.length > 0 && (
+              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <p className="text-blue-800 text-sm">
+                  Найдено вакансий: <span className="font-semibold">{vacancies.length}</span>
+                  {hasMore && ' + ещё...'}
+                </p>
+              </div>
+            )}
+
             <div className="grid gap-4">
               {vacancies.map((vacancy) => (
                 <VacancyCard key={vacancy.id} vacancy={vacancy} />
@@ -73,6 +86,7 @@ function App() {
               onLoadMore={loadMore}
               isLoading={isLoading}
               hasMore={hasMore}
+              show={showLoadMore}
             />
           </div>
         </div>
