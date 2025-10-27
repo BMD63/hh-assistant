@@ -1,27 +1,16 @@
 import { useState } from 'react';
 
-export function useSearch() {
+export function useSearch(onSearch: (query: string) => void) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     if (!searchQuery.trim()) return;
-    
-    setIsLoading(true);
-    try {
-      //  логика поиска через API
-      console.log('Searching for:', searchQuery);
-      // Имитация загрузки
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    } finally {
-      setIsLoading(false);
-    }
+    onSearch(searchQuery);
   };
 
   return {
     searchQuery,
     setSearchQuery,
-    isLoading,
     handleSearch,
   };
 }
