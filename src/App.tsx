@@ -1,12 +1,19 @@
 import { Header } from './components/Header';
 import { SearchForm } from './components/SearchForm';
 import { VacancyCard } from './components/VacancyCard';
+import { LoadMoreButton } from './components/LoadMoreButton';
 import { useSearch } from './hooks/useSearch';
 import { useVacancies } from './hooks/useVacancies';
+import { useState } from 'react';
 
 function App() {
-  const { vacancies, isLoading, error, searchVacancies } = useVacancies();
-  const { searchQuery, setSearchQuery, handleSearch } = useSearch(searchVacancies);
+  const [currentQuery, setCurrentQuery] = useState('');
+  const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
+  
+  const { searchQuery, setSearchQuery, handleSearch } = useSearch((query: string) => {
+    setCurrentQuery(query);
+    searchVacancies(query, 0);
+  });
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,20 +42,28 @@ function App() {
         )}
 
         <div className="grid gap-4 max-w-4xl mx-auto">
-          {isLoading ? (
+          {vacancies.map((vacancy) => (
+            <VacancyCard key={vacancy.id} vacancy={vacancy} />
+          ))}
+          
+          {isLoading && vacancies.length === 0 && (
             <div className="text-center py-8">
               <p className="text-gray-500">Ищем вакансии...</p>
             </div>
-          ) : vacancies.length > 0 ? (
-            vacancies.map((vacancy) => (
-              <VacancyCard key={vacancy.id} vacancy={vacancy} />
-            ))
-          ) : searchQuery ? (
+          )}
+          
+          {!isLoading && vacancies.length === 0 && currentQuery && (
             <div className="text-center py-8">
               <p className="text-gray-500">Вакансии не найдены</p>
             </div>
-          ) : null}
+          )}
         </div>
+
+        <LoadMoreButton
+          onLoadMore={() => loadMore(currentQuery)}
+          isLoading={isLoading}
+          hasMore={hasMore}
+        />
       </main>
     </div>
   );

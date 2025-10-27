@@ -22,17 +22,17 @@ export class HHApiService {
   }
 
   async searchVacancies(
-    text: string = '', 
+    text: string = '',
     page: number = 0,
     per_page: number = 20
-    ): Promise<VacanciesResponse> {
+  ): Promise<VacanciesResponse> {
     return this.fetchAPI('/vacancies', {
-        text,
-        page: page.toString(),
-        per_page: per_page.toString(),
-        search_field: 'name'
+      text,
+      page: page.toString(),
+      per_page: per_page.toString(),
+      search_field: 'name'
     });
-    }
+  }
 
   async getVacancy(id: string) {
     return this.fetchAPI(`/vacancies/${id}`);
