@@ -2,16 +2,15 @@ import { Header } from './components/Header';
 import { SearchForm } from './components/SearchForm';
 import { VacancyCard } from './components/VacancyCard';
 import { LoadMoreButton } from './components/LoadMoreButton';
+import { IncludeExcludeFilter } from './components/IncludeExcludeFilter';
+import { ExperienceFilter } from './components/ExperienceFilter';
 import { useSearch } from './hooks/useSearch';
 import { useVacancies } from './hooks/useVacancies';
-import { useState } from 'react';
 
 function App() {
-  const [currentQuery, setCurrentQuery] = useState('');
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
   
   const { searchQuery, setSearchQuery, handleSearch } = useSearch((query: string) => {
-    setCurrentQuery(query);
     searchVacancies(query, 0);
   });
 
@@ -35,35 +34,48 @@ function App() {
           />
         </div>
 
-        {error && (
-          <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-800">{error}</p>
+        <div className="flex gap-8 max-w-6xl mx-auto">
+          {/* Боковая панель с фильтрами */}
+          <div className="w-80 flex-shrink-0">
+            <div className="space-y-4">
+              <IncludeExcludeFilter />
+              <ExperienceFilter />
+            </div>
           </div>
-        )}
 
-        <div className="grid gap-4 max-w-4xl mx-auto">
-          {vacancies.map((vacancy) => (
-            <VacancyCard key={vacancy.id} vacancy={vacancy} />
-          ))}
-          
-          {isLoading && vacancies.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">Ищем вакансии...</p>
+          {/* Основной контент */}
+          <div className="flex-1">
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-800">{error}</p>
+              </div>
+            )}
+
+            <div className="grid gap-4">
+              {vacancies.map((vacancy) => (
+                <VacancyCard key={vacancy.id} vacancy={vacancy} />
+              ))}
+              
+              {isLoading && vacancies.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Ищем вакансии...</p>
+                </div>
+              )}
+              
+              {!isLoading && vacancies.length === 0 && searchQuery && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Вакансии не найдены</p>
+                </div>
+              )}
             </div>
-          )}
-          
-          {!isLoading && vacancies.length === 0 && currentQuery && (
-            <div className="text-center py-8">
-              <p className="text-gray-500">Вакансии не найдены</p>
-            </div>
-          )}
+
+            <LoadMoreButton
+              onLoadMore={loadMore}
+              isLoading={isLoading}
+              hasMore={hasMore}
+            />
+          </div>
         </div>
-
-        <LoadMoreButton
-          onLoadMore={() => loadMore(currentQuery)}
-          isLoading={isLoading}
-          hasMore={hasMore}
-        />
       </main>
     </div>
   );
