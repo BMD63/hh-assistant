@@ -6,9 +6,13 @@ export const buildSearchQuery = (
   const parts = [baseQuery.trim()];
   
   //  обязательные термины
-  includeTerms.forEach(term => {
-    if (term.trim()) parts.push(term.trim());
-  });
+   if (includeTerms.length > 0) {
+    const orTerms = includeTerms
+      .filter(term => term.trim())
+      .map(term => term.trim())
+      .join(' OR ');
+    parts.push(`(${orTerms})`);
+  }
   
   //  исключающие термины
   excludeTerms.forEach(term => {
