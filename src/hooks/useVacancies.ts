@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Vacancy } from '../types/vacancy';
 import { hhApiService } from '../services/hhApi';
 import { buildSearchQuery } from '../utils/searchQueryBuilder';
@@ -21,10 +21,8 @@ export function useVacancies() {
     setError(null);
     
     try {
-      // Строим финальный запрос с фильтрами
       const finalQuery = buildSearchQuery(baseQuery, includeTerms, excludeTerms);
       
-      // Преобразуем фильтры в параметры HH API
       const experienceParam = experience.length > 0 ? experience[0] : undefined;
       const employmentParam = employment.length > 0 ? employment[0] : undefined;
       const scheduleParam = schedule.length > 0 ? schedule[0] : undefined;
@@ -57,6 +55,13 @@ export function useVacancies() {
       setIsLoading(false);
     }
   };
+
+  // Автоматический поиск при изменении фильтров
+  useEffect(() => {
+  if (currentQuery) {
+    searchVacancies(currentQuery, 0);
+  }
+}, [includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule]);
 
   const loadMore = () => {
     if (!hasMore || isLoading || !currentQuery) return;
