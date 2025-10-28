@@ -12,8 +12,8 @@ export function ExperienceFilter() {
 
   const handleExperienceChange = (value: string) => {
     const newExperience = experience.includes(value)
-      ? experience.filter(exp => exp !== value)
-      : [value]; // Только один вариант можно выбрать
+      ? [] // сбрасываем фильтр
+      : [value]; // выбираем новый
     
     setExperience(newExperience);
   };
@@ -23,6 +23,18 @@ export function ExperienceFilter() {
       <h3 className="font-semibold text-gray-900 mb-3">Опыт работы</h3>
       
       <div className="space-y-2">
+        <label className="flex items-center">
+          <input
+            type="radio"
+            name="experience"
+            value=""
+            checked={experience.length === 0}
+            onChange={() => setExperience([])}
+            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+          />
+          <span className="ml-2 text-sm text-gray-700">Не имеет значения</span>
+        </label>
+        
         {EXPERIENCE_OPTIONS.map((option) => (
           <label key={option.value} className="flex items-center">
             <input
