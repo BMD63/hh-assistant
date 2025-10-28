@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Vacancy } from '../types/vacancy';
 import { hhApiService } from '../services/hhApi';
 import { buildSearchQuery } from '../utils/searchQueryBuilder';
@@ -14,7 +14,7 @@ export function useVacancies() {
 
   const { includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule } = useFiltersStore();
 
-  const searchVacancies = async (baseQuery: string, page: number = 0) => {
+  const searchVacancies = useCallback(async (baseQuery: string, page: number = 0) => {
     if (!baseQuery.trim()) return;
     
     setIsLoading(true);
@@ -54,15 +54,14 @@ export function useVacancies() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule]);
 
   // Автоматический поиск при изменении фильтров
   useEffect(() => {
-  if (currentQuery) {
-    searchVacancies(currentQuery, 0);
-  }
-}, [includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule]);
-
+    if (currentQuery) {
+      searchVacancies(currentQuery, 0);
+    }
+  }, [currentQuery, searchVacancies]); 
   const loadMore = () => {
     if (!hasMore || isLoading || !currentQuery) return;
     searchVacancies(currentQuery, currentPage + 1);
