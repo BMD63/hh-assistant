@@ -18,6 +18,9 @@ interface FiltersState {
   // График работы
   schedule: string[];
   
+  // Город 
+  area: string;
+  
   // Actions
   addIncludeTerm: (term: string) => void;
   removeIncludeTerm: (term: string) => void;
@@ -28,6 +31,8 @@ interface FiltersState {
   setSalaryTo: (salary: number | null) => void;
   setEmployment: (employment: string[]) => void;
   setSchedule: (schedule: string[]) => void;
+  setArea: (area: string) => void;
+  
   resetFilters: () => void;
 }
 
@@ -40,6 +45,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   salaryTo: null,
   employment: [],
   schedule: [],
+  area: '113', 
   
   // Actions
   addIncludeTerm: (term) => 
@@ -68,6 +74,8 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   setEmployment: (employment) => set({ employment }),
   setSchedule: (schedule) => set({ schedule }),
   
+  setArea: (area) => set({ area }),
+  
   resetFilters: () => set({
     includeTerms: [],
     excludeTerms: [],
@@ -76,5 +84,6 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     salaryTo: null,
     employment: [],
     schedule: [],
+    area: '113', 
   }),
 }));

@@ -20,3 +20,21 @@ export const SCHEDULE_OPTIONS = [
   { value: 'remote', label: 'Удаленная работа' },
   { value: 'flyInFlyOut', label: 'Вахтовый метод' },
 ];
+
+export const AREA_OPTIONS = [
+  { value: '113', label: 'Вся Россия' },
+  { value: '1', label: 'Москва' },
+  { value: '2', label: 'Санкт-Петербург' },
+  { value: '3', label: 'Екатеринбург' },
+  { value: '4', label: 'Новосибирск' },
+  { value: '66', label: 'Нижний Новгород' },
+  { value: '88', label: 'Казань' },
+  { value: '104', label: 'Челябинск' },
+  { value: '76', label: 'Ростов-на-Дону' },
+  { value: '54', label: 'Краснодар' },
+  { value: '72', label: 'Самара' },
+  { value: '68', label: 'Воронеж' },
+  { value: '99', label: 'Пермь' },
+  { value: '95', label: 'Уфа' },
+  { value: '26', label: 'Ставрополь' },
+] as const;

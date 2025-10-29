@@ -7,6 +7,7 @@ import { ExperienceFilter } from './components/ExperienceFilter';
 import { useSearch } from './hooks/useSearch';
 import { useVacancies } from './hooks/useVacancies';
 import { ScheduleFilter } from './components/ScheduleFilter';
+import { AreaFilter } from './components/AreaFilter';
 
 function App() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
@@ -43,8 +44,9 @@ function App() {
           <div className="w-80 flex-shrink-0">
             <div className="space-y-4">
               <IncludeExcludeFilter />
-              <ExperienceFilter />
               <ScheduleFilter />
+              <AreaFilter />
+              <ExperienceFilter />
             </div>
           </div>
 

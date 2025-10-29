@@ -11,6 +11,7 @@ interface SearchParams {
   experience?: string;
   employment?: string;
   schedule?: string;
+  area?: string;
 }
 
 export class HHApiService {
@@ -33,6 +34,9 @@ export class HHApiService {
   }
 
   async searchVacancies(params: SearchParams): Promise<VacanciesResponse> {
+
+    console.log('🔍 searchVacancies called with:', params);
+
     const apiParams: Record<string, string> = {};
 
     if (params.text) apiParams.text = params.text;
@@ -43,6 +47,10 @@ export class HHApiService {
     if (params.experience) apiParams.experience = params.experience;
     if (params.employment) apiParams.employment = params.employment;
     if (params.schedule) apiParams.schedule = params.schedule;
+
+    if (params.area !== undefined && params.area !== '113') {
+      apiParams.area = params.area;
+    }
 
     apiParams.search_field = 'name';
 
