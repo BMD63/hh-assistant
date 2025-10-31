@@ -13,6 +13,7 @@ import { SortFilter } from './components/SortFilter'
 import { VacancyPage } from './pages/VacancyPage'
 import { useSearch } from './hooks/useSearch'
 import { useVacancies } from './hooks/useVacancies'
+import { FavoritesPage } from './pages/FavoritesPage'
 
 function HomePage() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
@@ -109,6 +110,7 @@ function App() {
           <Route path="/hh-assistant" element={<HomePage />} />
           <Route path="/hh-assistant/" element={<HomePage />} />
           <Route path="/hh-assistant/vacancy/:id" element={<VacancyPage />} />
+          <Route path="/hh-assistant/favorites" element={<FavoritesPage />} />
           {/* Резервный маршрут для локальной разработки */}
           <Route path="/" element={<HomePage />} />
           <Route path="/vacancy/:id" element={<VacancyPage />} />

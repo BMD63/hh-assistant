@@ -1,12 +1,27 @@
 import { Link } from 'react-router-dom'
-import { MapPin, Building, Calendar } from 'lucide-react'
+import { MapPin, Building, Calendar, Heart } from 'lucide-react'
 import type { Vacancy } from '../types/vacancy'
+import { useFavoritesStore } from '../stores/favoritesStore'
 
 interface VacancyCardProps {
   vacancy: Vacancy
 }
 
 export function VacancyCard({ vacancy }: VacancyCardProps) {
+  const { addToFavorites, removeFromFavorites, isFavorite } = useFavoritesStore()
+  const isVacancyFavorite = isFavorite(vacancy.id)
+
+  const handleFavoriteClick = (e: React.MouseEvent) => {
+    e.preventDefault() // Предотвращаем переход по ссылке
+    e.stopPropagation()
+    
+    if (isVacancyFavorite) {
+      removeFromFavorites(vacancy.id)
+    } else {
+      addToFavorites(vacancy)
+    }
+  }
+
   const formatSalary = (salary: Vacancy['salary']) => {
     if (!salary) return 'Зарплата не указана'
     
@@ -20,9 +35,24 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
   const skills = vacancy.key_skills || []
 
   return (
-    <Link to={`/vacancy/${vacancy.id}`}>
-      <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer">
-        <div className="flex justify-between items-start mb-3">
+    <Link to={`/hh-assistant/vacancy/${vacancy.id}`}>
+      <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer relative">
+        {/* Кнопка избранного */}
+        <button
+          onClick={handleFavoriteClick}
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+          title={isVacancyFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
+        >
+          <Heart 
+            className={`w-5 h-5 ${
+              isVacancyFavorite 
+                ? 'fill-red-500 text-red-500' 
+                : 'text-gray-400 hover:text-red-500'
+            } transition-colors`}
+          />
+        </button>
+
+        <div className="flex justify-between items-start mb-3 pr-8">
           <h3 className="text-lg font-semibold text-gray-900">{vacancy.name}</h3>
           <div className="text-right">
             <p className="text-green-600 font-medium">

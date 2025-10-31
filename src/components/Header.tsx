@@ -1,4 +1,10 @@
+import { Link } from 'react-router-dom'
+import { Heart } from 'lucide-react'
+import { useFavoritesStore } from '../stores/favoritesStore'
+
 export function Header() {
+  const { favorites } = useFavoritesStore()
+
   return (
     <header className="border-b border-gray-200 bg-white">
       <div className="container mx-auto px-4 py-4">
@@ -7,18 +13,29 @@ export function Header() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">HH</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">HH Assistant</h1>
+            <Link to="/hh-assistant" className="text-2xl font-bold text-gray-900 hover:text-gray-700">
+              HH Assistant
+            </Link>
           </div>
           <nav className="flex items-center space-x-6">
-            <a href="/" className="text-gray-600 hover:text-gray-900 font-medium">
+            <Link to="/hh-assistant" className="text-gray-600 hover:text-gray-900 font-medium">
               Поиск
-            </a>
-            <a href="/favorites" className="text-gray-600 hover:text-gray-900 font-medium">
+            </Link>
+            <Link 
+              to="/hh-assistant/favorites" 
+              className="flex items-center text-gray-600 hover:text-gray-900 font-medium relative"
+            >
+              <Heart className="w-5 h-5 mr-1" />
               Избранное
-            </a>
+              {favorites.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {favorites.length}
+                </span>
+              )}
+            </Link>
           </nav>
         </div>
       </div>
     </header>
-  );
+  )
 }
