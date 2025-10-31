@@ -6,6 +6,7 @@ import { IncludeExcludeFilter } from './components/IncludeExcludeFilter';
 import { ExperienceFilter } from './components/ExperienceFilter';
 import { useSearch } from './hooks/useSearch';
 import { useVacancies } from './hooks/useVacancies';
+import { PeriodFilter } from './components/PeriodFilter';
 import { ScheduleFilter } from './components/ScheduleFilter';
 import { AreaFilter } from './components/AreaFilter';
 import { SalaryFilter } from './components/SalaryFilter';
@@ -48,6 +49,7 @@ function App() {
               <IncludeExcludeFilter />
 
                {/* Условно видимые фильтры */}
+              <PeriodFilter />
               <ExperienceFilter />
               <ScheduleFilter />
               <AreaFilter />

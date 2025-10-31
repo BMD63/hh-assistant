@@ -22,12 +22,17 @@ interface FiltersState {
   // Город
   area: string;
   
+  // Период публикации
+  period: number | null;
+  
   // Состояние раскрытия фильтров
   expandedFilters: {
     experience: boolean;
     schedule: boolean;
     area: boolean;
     salary: boolean;
+    employment: boolean;
+    period: boolean;
   };
   
   // Actions
@@ -42,6 +47,7 @@ interface FiltersState {
   setEmployment: (employment: string[]) => void;
   setSchedule: (schedule: string[]) => void;
   setArea: (area: string) => void;
+  setPeriod: (period: number | null) => void;
   toggleFilterExpanded: (filterName: keyof FiltersState['expandedFilters']) => void;
   resetFilters: () => void;
 }
@@ -57,6 +63,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   employment: [],
   schedule: [],
   area: '113',
+  period: null,
   
   // Раскрытые фильтры
   expandedFilters: {
@@ -64,6 +71,8 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     schedule: false, 
     area: false,
     salary: false,
+    employment: false,
+    period: false,
   },
   
   // Actions
@@ -101,6 +110,8 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   
   setArea: (area) => set({ area }),
   
+  setPeriod: (period) => set({ period }),
+  
   toggleFilterExpanded: (filterName) => 
     set((state) => ({
       expandedFilters: {
@@ -119,11 +130,14 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     employment: [],
     schedule: [],
     area: '113',
+    period: null,
     expandedFilters: {
       experience: false,
       schedule: false,
       area: false,
       salary: false,
+      employment: false,
+      period: false,
     },
   }),
 }));
