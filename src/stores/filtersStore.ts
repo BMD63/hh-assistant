@@ -18,16 +18,14 @@ interface FiltersState {
   // График работы
   schedule: string[];
   
-  // Город 
+  // Город
   area: string;
-
-   // Видимость фильтров
-  visibleFilters: {
+  
+  // НОВОЕ: состояние раскрытия фильтров (заменяет visibleFilters)
+  expandedFilters: {
     experience: boolean;
     schedule: boolean;
     area: boolean;
-    employment: boolean; 
-    salary: boolean;     
   };
   
   // Actions
@@ -42,9 +40,10 @@ interface FiltersState {
   setSchedule: (schedule: string[]) => void;
   setArea: (area: string) => void;
   
+  // НОВОЕ: переключение раскрытия (заменяет toggleFilterVisibility)
+  toggleFilterExpanded: (filterName: keyof FiltersState['expandedFilters']) => void;
+  
   resetFilters: () => void;
-
-  toggleFilterVisibility: (filterName: keyof FiltersState['visibleFilters']) => void;
 }
 
 export const useFiltersStore = create<FiltersState>((set) => ({
@@ -56,13 +55,13 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   salaryTo: null,
   employment: [],
   schedule: [],
-  area: '113', 
-  visibleFilters: {
+  area: '113',
+  
+  // НОВОЕ: раскрытые фильтры (заменяет visibleFilters)
+  expandedFilters: {
     experience: false,
     schedule: false, 
     area: false,
-    employment: false,
-    salary: false,
   },
   
   // Actions
@@ -91,8 +90,15 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   setSalaryTo: (salaryTo) => set({ salaryTo }),
   setEmployment: (employment) => set({ employment }),
   setSchedule: (schedule) => set({ schedule }),
-  
   setArea: (area) => set({ area }),
+  
+  toggleFilterExpanded: (filterName) => 
+    set((state) => ({
+      expandedFilters: {
+        ...state.expandedFilters,
+        [filterName]: !state.expandedFilters[filterName]
+      }
+    })),
   
   resetFilters: () => set({
     includeTerms: [],
@@ -102,13 +108,11 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     salaryTo: null,
     employment: [],
     schedule: [],
-    area: '113', 
+    area: '113',
+    expandedFilters: {
+      experience: false,
+      schedule: false,
+      area: false,
+    },
   }),
-  toggleFilterVisibility: (filterName) => 
-    set((state) => ({
-      visibleFilters: {
-        ...state.visibleFilters,
-        [filterName]: !state.visibleFilters[filterName]
-      }
-    }))
 }));

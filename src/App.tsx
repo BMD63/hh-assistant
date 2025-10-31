@@ -1,6 +1,5 @@
 import { Header } from './components/Header';
 import { SearchForm } from './components/SearchForm';
-import { FilterVisibility } from './components/FilterVisibility';
 import { VacancyCard } from './components/VacancyCard';
 import { LoadMoreButton } from './components/LoadMoreButton';
 import { IncludeExcludeFilter } from './components/IncludeExcludeFilter';
@@ -9,11 +8,9 @@ import { useSearch } from './hooks/useSearch';
 import { useVacancies } from './hooks/useVacancies';
 import { ScheduleFilter } from './components/ScheduleFilter';
 import { AreaFilter } from './components/AreaFilter';
-import { useFiltersStore } from './stores/filtersStore';
 
 function App() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
-  const { visibleFilters } = useFiltersStore();
 
   const { searchQuery, setSearchQuery, handleSearch } = useSearch((query: string) => {
     searchVacancies(query, 0);
@@ -47,13 +44,12 @@ function App() {
           <div className="w-80 flex-shrink-0">
             <div className="space-y-4">
                {/* Всегда видимые фильтры */}
-              <FilterVisibility />
               <IncludeExcludeFilter />
 
                {/* Условно видимые фильтры */}
-              {visibleFilters.experience && <ExperienceFilter />}
-              {visibleFilters.schedule && <ScheduleFilter />}
-              {visibleFilters.area && <AreaFilter />}
+              <ExperienceFilter />
+              <ScheduleFilter />
+              <AreaFilter />
             </div>
           </div>
 
