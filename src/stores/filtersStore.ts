@@ -20,6 +20,15 @@ interface FiltersState {
   
   // Город 
   area: string;
+
+   // Видимость фильтров
+  visibleFilters: {
+    experience: boolean;
+    schedule: boolean;
+    area: boolean;
+    employment: boolean; 
+    salary: boolean;     
+  };
   
   // Actions
   addIncludeTerm: (term: string) => void;
@@ -34,6 +43,8 @@ interface FiltersState {
   setArea: (area: string) => void;
   
   resetFilters: () => void;
+
+  toggleFilterVisibility: (filterName: keyof FiltersState['visibleFilters']) => void;
 }
 
 export const useFiltersStore = create<FiltersState>((set) => ({
@@ -46,6 +57,13 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   employment: [],
   schedule: [],
   area: '113', 
+  visibleFilters: {
+    experience: false,
+    schedule: false, 
+    area: false,
+    employment: false,
+    salary: false,
+  },
   
   // Actions
   addIncludeTerm: (term) => 
@@ -86,4 +104,11 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     schedule: [],
     area: '113', 
   }),
+  toggleFilterVisibility: (filterName) => 
+    set((state) => ({
+      visibleFilters: {
+        ...state.visibleFilters,
+        [filterName]: !state.visibleFilters[filterName]
+      }
+    }))
 }));
