@@ -8,6 +8,7 @@ import { useSearch } from './hooks/useSearch';
 import { useVacancies } from './hooks/useVacancies';
 import { ScheduleFilter } from './components/ScheduleFilter';
 import { AreaFilter } from './components/AreaFilter';
+import { SalaryFilter } from './components/SalaryFilter';
 
 function App() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
@@ -50,6 +51,7 @@ function App() {
               <ExperienceFilter />
               <ScheduleFilter />
               <AreaFilter />
+              <SalaryFilter />
             </div>
           </div>
 

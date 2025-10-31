@@ -11,6 +11,7 @@ interface FiltersState {
   // Зарплата
   salaryFrom: number | null;
   salaryTo: number | null;
+  salaryCurrency: string;
   
   // Тип занятости
   employment: string[];
@@ -21,11 +22,12 @@ interface FiltersState {
   // Город
   area: string;
   
-  // НОВОЕ: состояние раскрытия фильтров (заменяет visibleFilters)
+  // Состояние раскрытия фильтров
   expandedFilters: {
     experience: boolean;
     schedule: boolean;
     area: boolean;
+    salary: boolean;
   };
   
   // Actions
@@ -36,13 +38,11 @@ interface FiltersState {
   setExperience: (experience: string[]) => void;
   setSalaryFrom: (salary: number | null) => void;
   setSalaryTo: (salary: number | null) => void;
+  setSalaryCurrency: (currency: string) => void;
   setEmployment: (employment: string[]) => void;
   setSchedule: (schedule: string[]) => void;
   setArea: (area: string) => void;
-  
-  // НОВОЕ: переключение раскрытия (заменяет toggleFilterVisibility)
   toggleFilterExpanded: (filterName: keyof FiltersState['expandedFilters']) => void;
-  
   resetFilters: () => void;
 }
 
@@ -53,15 +53,17 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   experience: [],
   salaryFrom: null,
   salaryTo: null,
+  salaryCurrency: 'RUR',
   employment: [],
   schedule: [],
   area: '113',
   
-  // НОВОЕ: раскрытые фильтры (заменяет visibleFilters)
+  // Раскрытые фильтры
   expandedFilters: {
     experience: false,
     schedule: false, 
     area: false,
+    salary: false,
   },
   
   // Actions
@@ -86,10 +88,17 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     })),
     
   setExperience: (experience) => set({ experience }),
+  
   setSalaryFrom: (salaryFrom) => set({ salaryFrom }),
+  
   setSalaryTo: (salaryTo) => set({ salaryTo }),
+  
+  setSalaryCurrency: (salaryCurrency) => set({ salaryCurrency }),
+  
   setEmployment: (employment) => set({ employment }),
+  
   setSchedule: (schedule) => set({ schedule }),
+  
   setArea: (area) => set({ area }),
   
   toggleFilterExpanded: (filterName) => 
@@ -106,6 +115,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     experience: [],
     salaryFrom: null,
     salaryTo: null,
+    salaryCurrency: 'RUR',
     employment: [],
     schedule: [],
     area: '113',
@@ -113,6 +123,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
       experience: false,
       schedule: false,
       area: false,
+      salary: false,
     },
   }),
 }));
