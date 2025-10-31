@@ -1,111 +1,121 @@
-import { Header } from './components/Header';
-import { SearchForm } from './components/SearchForm';
-import { VacancyCard } from './components/VacancyCard';
-import { LoadMoreButton } from './components/LoadMoreButton';
-import { IncludeExcludeFilter } from './components/IncludeExcludeFilter';
-import { ExperienceFilter } from './components/ExperienceFilter';
-import { useSearch } from './hooks/useSearch';
-import { useVacancies } from './hooks/useVacancies';
-import { PeriodFilter } from './components/PeriodFilter';
-import { ScheduleFilter } from './components/ScheduleFilter';
-import { AreaFilter } from './components/AreaFilter';
-import { SalaryFilter } from './components/SalaryFilter';
+import { Routes, Route } from 'react-router-dom'
+import { Header } from './components/Header'
+import { SearchForm } from './components/SearchForm'
+import { VacancyCard } from './components/VacancyCard'
+import { LoadMoreButton } from './components/LoadMoreButton'
+import { IncludeExcludeFilter } from './components/IncludeExcludeFilter'
+import { SalaryFilter } from './components/SalaryFilter'
+import { ExperienceFilter } from './components/ExperienceFilter'
+import { ScheduleFilter } from './components/ScheduleFilter'
+import { AreaFilter } from './components/AreaFilter'
+import { PeriodFilter } from './components/PeriodFilter'
 import { SortFilter } from './components/SortFilter'
+import { VacancyPage } from './pages/VacancyPage'
+import { useSearch } from './hooks/useSearch'
+import { useVacancies } from './hooks/useVacancies'
 
-function App() {
+function HomePage() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
-
+  
   const { searchQuery, setSearchQuery, handleSearch } = useSearch((query: string) => {
     searchVacancies(query, 0);
   });
 
-  // Условия для показа кнопки "Загрузить еще"
-  const showLoadMore = vacancies.length > 0 && hasMore;
+  return (
+    <>
+      <div className="text-center mb-8">
+        <h2 className="text-4xl font-bold text-gray-900 mb-4">
+          Найди свою идеальную вакансию
+        </h2>
+        <p className="text-xl text-gray-600 mb-8">
+          Умный поиск вакансий с HH.ru
+        </p>
+        
+        <SearchForm
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onSearch={handleSearch}
+          isLoading={isLoading}
+        />
+      </div>
 
+      <div className="flex gap-8 max-w-6xl mx-auto">
+        {/* Боковая панель с фильтрами */}
+        <div className="w-80 flex-shrink-0">
+          <div className="space-y-4">
+            <IncludeExcludeFilter />
+            <SalaryFilter />
+            <ExperienceFilter />
+            <ScheduleFilter />
+            <AreaFilter />
+            <PeriodFilter />
+            <SortFilter />
+          </div>
+        </div>
+
+        {/* Основной контент */}
+        <div className="flex-1">
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-800">{error}</p>
+            </div>
+          )}
+
+          {vacancies.length > 0 && (
+            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-blue-800 text-sm">
+                Найдено вакансий: <span className="font-semibold">{vacancies.length}</span>
+                {hasMore && ' + ещё...'}
+              </p>
+            </div>
+          )}
+
+          <div className="grid gap-4">
+            {vacancies.map((vacancy) => (
+              <VacancyCard key={vacancy.id} vacancy={vacancy} />
+            ))}
+            
+            {isLoading && vacancies.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-500">Ищем вакансии...</p>
+              </div>
+            )}
+            
+            {!isLoading && vacancies.length === 0 && searchQuery && (
+              <div className="text-center py-8">
+                <p className="text-gray-500">Вакансии не найдены</p>
+              </div>
+            )}
+          </div>
+
+          <LoadMoreButton
+            onLoadMore={loadMore}
+            isLoading={isLoading}
+            hasMore={hasMore}
+            show={vacancies.length > 0 && hasMore}
+          />
+        </div>
+      </div>
+    </>
+  )
+}
+
+function App() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Найди свою идеальную вакансию
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Умный поиск вакансий с HH.ru
-          </p>
-          
-          <SearchForm
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onSearch={handleSearch}
-            isLoading={isLoading}
-          />
-        </div>
-
-        <div className="flex gap-8 max-w-6xl mx-auto">
-          {/* Боковая панель с фильтрами */}
-          <div className="w-80 flex-shrink-0">
-            <div className="space-y-4">
-               {/* Всегда видимые фильтры */}
-              <IncludeExcludeFilter />
-
-               {/* Условно видимые фильтры */}
-              <PeriodFilter />
-              <ExperienceFilter />
-              <ScheduleFilter />
-              <AreaFilter />
-              <SalaryFilter />
-              <SortFilter />
-            </div>
-          </div>
-
-          {/* Основной контент */}
-          <div className="flex-1">
-            {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p className="text-red-800">{error}</p>
-              </div>
-            )}
-
-            {/* Статистика найденных вакансий */}
-            {vacancies.length > 0 && (
-              <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-blue-800 text-sm">
-                  Найдено вакансий: <span className="font-semibold">{vacancies.length}</span>
-                  {hasMore && ' + ещё...'}
-                </p>
-              </div>
-            )}
-
-            <div className="grid gap-4">
-              {vacancies.map((vacancy) => (
-                <VacancyCard key={vacancy.id} vacancy={vacancy} />
-              ))}
-              
-              {isLoading && vacancies.length === 0 && (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Ищем вакансии...</p>
-                </div>
-              )}
-              
-              {!isLoading && vacancies.length === 0 && searchQuery && (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Вакансии не найдены</p>
-                </div>
-              )}
-            </div>
-
-            <LoadMoreButton
-              onLoadMore={loadMore}
-              isLoading={isLoading}
-              hasMore={hasMore}
-              show={showLoadMore}
-            />
-          </div>
-        </div>
+        <Routes>
+          <Route path="/hh-assistant" element={<HomePage />} />
+          <Route path="/hh-assistant/" element={<HomePage />} />
+          <Route path="/hh-assistant/vacancy/:id" element={<VacancyPage />} />
+          {/* Резервный маршрут для локальной разработки */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/vacancy/:id" element={<VacancyPage />} />
+        </Routes>
       </main>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
