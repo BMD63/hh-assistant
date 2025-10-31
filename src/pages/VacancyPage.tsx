@@ -124,19 +124,31 @@ export function VacancyPage() {
           </div>
 
           {/* Описание */}
-          {vacancy.snippet?.requirement && (
+          {/* Полное описание */}
+          {vacancy.description && (
             <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-2">Требования</h3>
-              <p className="text-gray-700 leading-relaxed">{vacancy.snippet.requirement}</p>
+                <h3 className="font-semibold text-gray-900 mb-3">Описание вакансии</h3>
+                <div 
+                className="vacancy-description text-gray-700"
+                dangerouslySetInnerHTML={{ __html: vacancy.description }}
+                />
             </div>
-          )}
+            )}
 
-          {vacancy.snippet?.responsibility && (
+            {/* Если нет полного описания, показываем snippet */}
+            {!vacancy.description && vacancy.snippet?.requirement && (
             <div className="mb-6">
-              <h3 className="font-semibold text-gray-900 mb-2">Обязанности</h3>
-              <p className="text-gray-700 leading-relaxed">{vacancy.snippet.responsibility}</p>
+                <h3 className="font-semibold text-gray-900 mb-2">Требования</h3>
+                <p className="text-gray-700 leading-relaxed">{vacancy.snippet.requirement}</p>
             </div>
-          )}
+            )}
+
+            {!vacancy.description && vacancy.snippet?.responsibility && (
+            <div className="mb-6">
+                <h3 className="font-semibold text-gray-900 mb-2">Обязанности</h3>
+                <p className="text-gray-700 leading-relaxed">{vacancy.snippet.responsibility}</p>
+            </div>
+            )}
 
           {/* Навыки */}
           {vacancy.key_skills && vacancy.key_skills.length > 0 && (

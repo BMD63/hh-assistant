@@ -16,6 +16,42 @@ export interface Employer {
     original?: string;
   };
 }
+export interface Contact {
+  name?: string;
+  email?: string;
+  phones?: Array<{
+    country: string;
+    city: string;
+    number: string;
+    comment?: string;
+  }>;
+}
+
+export interface Address {
+  city?: string;
+  street?: string;
+  building?: string;
+  description?: string;
+  lat?: number;
+  lng?: number;
+  raw?: string;
+  metro?: {
+    station_name: string;
+    line_name: string;
+    station_id: string;
+    line_id: string;
+    lat: number;
+    lng: number;
+  };
+  metro_stations?: Array<{
+    station_name: string;
+    line_name: string;
+    station_id: string;
+    line_id: string;
+    lat: number;
+    lng: number;
+  }>;
+}
 
 export interface Vacancy {
   id: string;
@@ -27,10 +63,11 @@ export interface Vacancy {
   };
   salary: Salary | null;
   employer: Employer;
-  snippet: {
+  snippet?: {
     requirement?: string;
     responsibility?: string;
   };
+  description?: string; 
   experience: {
     id: string;
     name: string;
@@ -48,6 +85,8 @@ export interface Vacancy {
   }>;
   published_at: string;
   alternate_url: string;
+  contacts?: Contact;
+  address?: Address;
 }
 
 export interface VacanciesResponse {

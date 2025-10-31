@@ -44,3 +44,108 @@
   --input: 217.2 32.6% 17.5%;
   --ring: 212.7 26.8% 83.9%;
 }
+
+/* Стили для HTML контента из описания вакансий */
+.vacancy-description {
+  max-width: none;
+  line-height: 1.6;
+}
+
+.vacancy-description h1,
+.vacancy-description h2,
+.vacancy-description h3,
+.vacancy-description h4 {
+  font-weight: 600;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  color: #1f2937;
+}
+
+.vacancy-description h1 { 
+  font-size: 1.5em; 
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.5em;
+}
+
+.vacancy-description h2 { 
+  font-size: 1.25em; 
+}
+
+.vacancy-description h3 { 
+  font-size: 1.125em; 
+}
+
+.vacancy-description ul,
+.vacancy-description ol {
+  padding-left: 1.5em;
+  margin: 1em 0;
+}
+
+.vacancy-description li {
+  margin: 0.5em 0;
+  position: relative;
+}
+
+.vacancy-description ul li::before {
+  content: "•";
+  color: #6b7280;
+  font-weight: bold;
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+}
+
+.vacancy-description ol {
+  list-style-type: decimal;
+}
+
+.vacancy-description p {
+  margin: 1em 0;
+}
+
+.vacancy-description strong {
+  font-weight: 600;
+  color: #374151;
+}
+
+.vacancy-description em {
+  font-style: italic;
+}
+
+.vacancy-description a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+.vacancy-description a:hover {
+  color: #1d4ed8;
+}
+
+.vacancy-description blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1em;
+  margin: 1em 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.vacancy-description code {
+  background-color: #f3f4f6;
+  padding: 0.125em 0.25em;
+  border-radius: 0.25em;
+  font-family: monospace;
+  font-size: 0.875em;
+}
+
+.vacancy-description pre {
+  background-color: #f3f4f6;
+  padding: 1em;
+  border-radius: 0.5em;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.vacancy-description pre code {
+  background: none;
+  padding: 0;
+}
