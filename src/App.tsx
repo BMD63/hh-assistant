@@ -10,6 +10,7 @@ import { PeriodFilter } from './components/PeriodFilter';
 import { ScheduleFilter } from './components/ScheduleFilter';
 import { AreaFilter } from './components/AreaFilter';
 import { SalaryFilter } from './components/SalaryFilter';
+import { SortFilter } from './components/SortFilter'
 
 function App() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
@@ -54,6 +55,7 @@ function App() {
               <ScheduleFilter />
               <AreaFilter />
               <SalaryFilter />
+              <SortFilter />
             </div>
           </div>
 

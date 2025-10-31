@@ -12,6 +12,8 @@ interface SearchParams {
   employment?: string;
   schedule?: string;
   area?: string;
+  period?: number;
+  order_by?: string;
 }
 
 export class HHApiService {
@@ -51,6 +53,8 @@ export class HHApiService {
     if (params.area !== undefined && params.area !== '113') {
       apiParams.area = params.area;
     }
+    if (params.period) apiParams.period = params.period.toString();
+    if (params.order_by) apiParams.order_by = params.order_by;
 
     apiParams.search_field = 'name';
 

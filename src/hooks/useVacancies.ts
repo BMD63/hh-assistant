@@ -12,7 +12,7 @@ export function useVacancies() {
   const [hasMore, setHasMore] = useState(true);
   const [currentQuery, setCurrentQuery] = useState('');
 
-  const { includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule, area } = useFiltersStore();
+  const { includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule, area, period, sortBy } = useFiltersStore();
 
   const searchVacancies = useCallback(async (baseQuery: string, page: number = 0) => {
     if (!baseQuery.trim()) return;
@@ -37,6 +37,8 @@ export function useVacancies() {
         employment: employmentParam,
         schedule: scheduleParam,
         area: area !== '113' ? area : undefined,
+        period: period || undefined,
+        order_by: sortBy, 
       });
       
       if (response && response.items) {
@@ -55,14 +57,31 @@ export function useVacancies() {
     } finally {
       setIsLoading(false);
     }
-  }, [includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule, area]);
+  }, [
+  includeTerms, 
+  excludeTerms, 
+  experience, 
+  salaryFrom, 
+  salaryTo, 
+  employment, 
+  schedule, 
+  area,
+  period,       
+  sortBy        
+]);
 
   // Автоматический поиск при изменении фильтров
   useEffect(() => {
     if (currentQuery) {
       searchVacancies(currentQuery, 0);
     }
-  }, [currentQuery, searchVacancies, area]); 
+  }, [
+  currentQuery, 
+  searchVacancies, 
+  area,
+  period,        
+  sortBy         
+]); 
   const loadMore = () => {
     if (!hasMore || isLoading || !currentQuery) return;
     searchVacancies(currentQuery, currentPage + 1);

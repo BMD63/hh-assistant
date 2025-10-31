@@ -33,7 +33,11 @@ interface FiltersState {
     salary: boolean;
     employment: boolean;
     period: boolean;
+    sort: boolean;
   };
+
+  // Сортировка
+  sortBy: string;
   
   // Actions
   addIncludeTerm: (term: string) => void;
@@ -50,6 +54,7 @@ interface FiltersState {
   setPeriod: (period: number | null) => void;
   toggleFilterExpanded: (filterName: keyof FiltersState['expandedFilters']) => void;
   resetFilters: () => void;
+  setSortBy: (sortBy: string) => void;
 }
 
 export const useFiltersStore = create<FiltersState>((set) => ({
@@ -64,6 +69,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
   schedule: [],
   area: '113',
   period: null,
+  sortBy: 'relevance',
   
   // Раскрытые фильтры
   expandedFilters: {
@@ -73,6 +79,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
     salary: false,
     employment: false,
     period: false,
+    sort: false,
   },
   
   // Actions
@@ -119,6 +126,8 @@ export const useFiltersStore = create<FiltersState>((set) => ({
         [filterName]: !state.expandedFilters[filterName]
       }
     })),
+
+    setSortBy: (sortBy) => set({ sortBy }),
   
   resetFilters: () => set({
     includeTerms: [],
@@ -138,6 +147,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
       salary: false,
       employment: false,
       period: false,
+      sort: false,
     },
   }),
 }));
