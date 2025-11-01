@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface SearchFormProps {
   searchQuery: string;
@@ -13,6 +14,32 @@ export function SearchForm({
   onSearch, 
   isLoading = false 
 }: SearchFormProps) {
+  const [placeholder, setPlaceholder] = useState('');
+
+  useEffect(() => {
+    const updatePlaceholder = () => {
+      if (window.innerWidth < 768) {
+        // Мобильная версия - короткий плейсхолдер
+        setPlaceholder('Должность...');
+      } else if (window.innerWidth < 1024) {
+        // Планшетная версия - средний плейсхолдер
+        setPlaceholder('Например: frontend...');
+      } else {
+        // Десктопная версия - полный плейсхолдер
+        setPlaceholder('Введите название должности, например: frontend разработчик');
+      }
+    };
+
+    // Устанавливаем начальное значение
+    updatePlaceholder();
+
+    // Слушаем изменения размера окна
+    window.addEventListener('resize', updatePlaceholder);
+
+    // Очистка
+    return () => window.removeEventListener('resize', updatePlaceholder);
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch();
@@ -28,7 +55,7 @@ export function SearchForm({
           type="text"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
-          placeholder="Введите название должности, например: React разработчик"
+          placeholder={placeholder}
           className="block w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
           disabled={isLoading}
         />
