@@ -39,7 +39,7 @@ function HomePage() {
 
   return (
     <>
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 w-full min-w-0">
         <h2 className="text-4xl font-bold text-gray-900 mb-4">
           Найди свою идеальную вакансию
         </h2>
@@ -68,7 +68,7 @@ function HomePage() {
         </div>
       )}
 
-      <div className="flex gap-8 max-w-6xl mx-auto relative">
+      <div className="flex gap-8 w-full max-w-full mx-auto relative">
         {/* Боковая панель с фильтрами */}
         <div className={`
           w-80 flex-shrink-0
