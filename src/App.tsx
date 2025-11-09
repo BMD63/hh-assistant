@@ -16,12 +16,14 @@ import { VacancyPage } from './pages/VacancyPage'
 import { FavoritesPage } from './pages/FavoritesPage'
 import { useSearch } from './hooks/useSearch'
 import { useVacancies } from './hooks/useVacancies'
+import { useFiltersStore } from './stores/filtersStore'
 
 function HomePage() {
-  const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore } = useVacancies();
+  const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore, clearSearch } = useVacancies();
   const { searchQuery, setSearchQuery, handleSearch } = useSearch((query: string) => {
     searchVacancies(query, 0);
   });
+  const resetFilters = useFiltersStore((state) => state.resetFilters);
   
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -37,6 +39,12 @@ function HomePage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const handleReset = () => {
+    setSearchQuery('');
+    resetFilters();
+    clearSearch();
+  };
+
   return (
     <>
       <div className="text-center mb-8 w-full min-w-0">
@@ -51,7 +59,9 @@ function HomePage() {
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onSearch={handleSearch}
+          onReset={handleReset}
           isLoading={isLoading}
+          hasResults={vacancies.length > 0}
         />
       </div>
 

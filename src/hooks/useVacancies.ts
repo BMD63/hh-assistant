@@ -87,6 +87,14 @@ export function useVacancies() {
     searchVacancies(currentQuery, currentPage + 1);
   };
 
+  const clearSearch = useCallback(() => {
+    setVacancies([]);
+    setCurrentQuery('');
+    setCurrentPage(0);
+    setHasMore(true);
+    setError(null);
+  }, []);
+
   return {
     vacancies,
     isLoading,
@@ -94,5 +102,6 @@ export function useVacancies() {
     hasMore,
     searchVacancies,
     loadMore,
+    clearSearch,
   };
 }
