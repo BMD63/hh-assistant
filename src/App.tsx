@@ -14,19 +14,39 @@ import { PeriodFilter } from './components/PeriodFilter'
 import { SortFilter } from './components/SortFilter'
 import { VacancyPage } from './pages/VacancyPage'
 import { FavoritesPage } from './pages/FavoritesPage'
+import { SavedSearchesPage } from './pages/SavedSearchesPage'
 import { useSearch } from './hooks/useSearch'
 import { useVacancies } from './hooks/useVacancies'
 import { useFiltersStore } from './stores/filtersStore'
+import { SaveSearchModal } from './components/SaveSearchModal'
+import { useSavedSearchesStore } from './stores/savedSearchesStore'
+import { useShallow } from 'zustand/react/shallow'
 
 function HomePage() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore, clearSearch } = useVacancies();
   const { searchQuery, setSearchQuery, handleSearch } = useSearch((query: string) => {
     searchVacancies(query, 0);
   });
+  const filterValues = useFiltersStore(useShallow((state) => ({
+    includeTerms: state.includeTerms,
+    excludeTerms: state.excludeTerms,
+    experience: state.experience,
+    salaryFrom: state.salaryFrom,
+    salaryTo: state.salaryTo,
+    salaryCurrency: state.salaryCurrency,
+    employment: state.employment,
+    schedule: state.schedule,
+    area: state.area,
+    period: state.period,
+    sortBy: state.sortBy,
+  })));
   const resetFilters = useFiltersStore((state) => state.resetFilters);
+  const addSavedSearch = useSavedSearchesStore((state) => state.addSavedSearch);
   
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+  const [saveSearchName, setSaveSearchName] = useState('');
 
   useEffect(() => {
     const checkMobile = () => {
@@ -41,26 +61,78 @@ function HomePage() {
 
   // Восстанавливаем поиск при загрузке страницы, если есть сохраненный запрос
   useEffect(() => {
-    if (searchQuery.trim() && vacancies.length === 0 && !isLoading) {
-      // Небольшая задержка, чтобы убедиться, что все сторы загрузились
-      const timer = setTimeout(() => {
-        searchVacancies(searchQuery, 0);
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Запускаем только при монтировании компонента
+    if (!searchQuery.trim()) return;
+    if (isLoading || vacancies.length > 0) return;
+
+    const timer = setTimeout(() => {
+      searchVacancies(searchQuery, 0);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, vacancies.length, isLoading, searchVacancies]);
+
+  const hasActiveFilters =
+    filterValues.includeTerms.length > 0 ||
+    filterValues.excludeTerms.length > 0 ||
+    filterValues.experience.length > 0 ||
+    filterValues.salaryFrom !== null ||
+    filterValues.salaryTo !== null ||
+    filterValues.employment.length > 0 ||
+    filterValues.schedule.length > 0 ||
+    filterValues.area !== '113' ||
+    filterValues.period !== null ||
+    filterValues.sortBy !== 'relevance';
+
+  const canSaveCurrentSearch = Boolean(searchQuery.trim() || hasActiveFilters);
+
+  const handleOpenSaveModal = () => {
+    if (!canSaveCurrentSearch) return;
+    const defaultName = searchQuery.trim() || 'Новый поиск';
+    setSaveSearchName(defaultName);
+    setIsSaveModalOpen(true);
+  };
+
+  const handleCloseSaveModal = () => {
+    setIsSaveModalOpen(false);
+    setSaveSearchName('');
+  };
+
+  const handleConfirmSaveSearch = () => {
+    if (!canSaveCurrentSearch) return;
+
+    const trimmedName = saveSearchName.trim() || searchQuery.trim() || `Поиск ${new Date().toLocaleDateString('ru-RU')}`;
+    const queryToSave = searchQuery.trim();
+
+    const filtersToSave = {
+      includeTerms: [...filterValues.includeTerms],
+      excludeTerms: [...filterValues.excludeTerms],
+      experience: [...filterValues.experience],
+      salaryFrom: filterValues.salaryFrom,
+      salaryTo: filterValues.salaryTo,
+      salaryCurrency: filterValues.salaryCurrency,
+      employment: [...filterValues.employment],
+      schedule: [...filterValues.schedule],
+      area: filterValues.area,
+      period: filterValues.period,
+      sortBy: filterValues.sortBy,
+    };
+
+    addSavedSearch({
+      name: trimmedName,
+      query: queryToSave,
+      filters: filtersToSave,
+    });
+
+    setIsSaveModalOpen(false);
+    setSaveSearchName('');
+  };
 
   const handleReset = () => {
     setSearchQuery('');
     resetFilters();
     clearSearch();
-    // Очищаем localStorage при сбросе
-    try {
-      localStorage.removeItem('search-query-storage');
-    } catch (error) {
-      console.error('Ошибка при очистке поискового запроса:', error);
-    }
+    setIsSaveModalOpen(false);
+    setSaveSearchName('');
   };
 
   return (
@@ -78,8 +150,10 @@ function HomePage() {
           onSearchChange={setSearchQuery}
           onSearch={handleSearch}
           onReset={handleReset}
+          onSaveSearch={handleOpenSaveModal}
           isLoading={isLoading}
           hasResults={vacancies.length > 0}
+          canSaveSearch={hasActiveFilters}
         />
       </div>
 
@@ -182,8 +256,16 @@ function HomePage() {
           />
         </div>
       </div>
+
+      <SaveSearchModal
+        isOpen={isSaveModalOpen}
+        name={saveSearchName}
+        onNameChange={setSaveSearchName}
+        onClose={handleCloseSaveModal}
+        onConfirm={handleConfirmSaveSearch}
+      />
     </>
-  )
+  );
 }
 
 function App() {
@@ -195,14 +277,16 @@ function App() {
           <Route path="/hh-assistant" element={<HomePage />} />
           <Route path="/hh-assistant/vacancy/:id" element={<VacancyPage />} />
           <Route path="/hh-assistant/favorites" element={<FavoritesPage />} />
+          <Route path="/hh-assistant/saved-searches" element={<SavedSearchesPage />} />
           {/* Резервные маршруты для локальной разработки */}
           <Route path="/" element={<HomePage />} />
           <Route path="/vacancy/:id" element={<VacancyPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/saved-searches" element={<SavedSearchesPage />} />
         </Routes>
       </main>
     </div>
-  )
+  );
 }
 
 export default App

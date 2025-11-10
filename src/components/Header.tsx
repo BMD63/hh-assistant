@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom'
-import { Heart } from 'lucide-react'
+import { Heart, Bookmark } from 'lucide-react'
 import { useFavoritesStore } from '../stores/favoritesStore'
+import { useSavedSearchesStore } from '../stores/savedSearchesStore'
 
 export function Header() {
   const { favorites } = useFavoritesStore()
+  const savedSearchesCount = useSavedSearchesStore((state) => state.savedSearches.length)
 
   return (
     <header className="border-b border-gray-200 bg-white">
@@ -30,6 +32,18 @@ export function Header() {
               {favorites.length > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {favorites.length}
+                </span>
+              )}
+            </Link>
+            <Link 
+              to="/hh-assistant/saved-searches" 
+              className="flex items-center text-gray-600 hover:text-gray-900 font-medium relative"
+            >
+              <Bookmark className="w-5 h-5 mr-1" />
+              Сохраненные поиски
+              {savedSearchesCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {savedSearchesCount}
                 </span>
               )}
             </Link>

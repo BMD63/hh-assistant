@@ -1,39 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useCallback } from 'react'
+import { useSearchStore } from '../stores/searchStore'
 
-const SEARCH_QUERY_STORAGE_KEY = 'search-query-storage';
+const LEGACY_STORAGE_KEY = 'search-query-storage'
 
 export function useSearch(onSearch: (query: string) => void) {
-  // Загружаем сохраненный запрос из localStorage при инициализации
-  const [searchQuery, setSearchQuery] = useState(() => {
-    try {
-      const saved = localStorage.getItem(SEARCH_QUERY_STORAGE_KEY);
-      return saved ? saved : '';
-    } catch {
-      return '';
-    }
-  });
+  const searchQuery = useSearchStore((state) => state.searchQuery)
+  const setSearchQuery = useSearchStore((state) => state.setSearchQuery)
 
-  // Сохраняем запрос в localStorage при изменении
+  // Удаляем старый ключ из localStorage после миграции
   useEffect(() => {
     try {
-      if (searchQuery.trim()) {
-        localStorage.setItem(SEARCH_QUERY_STORAGE_KEY, searchQuery);
-      } else {
-        localStorage.removeItem(SEARCH_QUERY_STORAGE_KEY);
-      }
+      localStorage.removeItem(LEGACY_STORAGE_KEY)
     } catch (error) {
-      console.error('Ошибка при сохранении поискового запроса:', error);
+      console.error('Не удалось удалить устаревший поисковый ключ в localStorage', error)
     }
-  }, [searchQuery]);
+  }, [])
 
-  const handleSearch = () => {
-    if (!searchQuery.trim()) return;
-    onSearch(searchQuery);
-  };
+  const handleSearch = useCallback(() => {
+    if (!searchQuery.trim()) return
+    onSearch(searchQuery)
+  }, [onSearch, searchQuery])
 
   return {
     searchQuery,
     setSearchQuery,
     handleSearch,
-  };
+  }
 }

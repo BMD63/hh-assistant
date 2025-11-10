@@ -1,4 +1,4 @@
-import { Search, X } from 'lucide-react';
+import { Search, X, BookmarkPlus } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface SearchFormProps {
@@ -6,8 +6,10 @@ interface SearchFormProps {
   onSearchChange: (query: string) => void;
   onSearch: () => void;
   onReset?: () => void;
+  onSaveSearch?: () => void;
   isLoading?: boolean;
   hasResults?: boolean;
+  canSaveSearch?: boolean;
 }
 
 export function SearchForm({ 
@@ -15,8 +17,10 @@ export function SearchForm({
   onSearchChange, 
   onSearch, 
   onReset,
+  onSaveSearch,
   isLoading = false,
-  hasResults = false
+  hasResults = false,
+  canSaveSearch = false,
 }: SearchFormProps) {
   const [placeholder, setPlaceholder] = useState('');
 
@@ -50,6 +54,8 @@ export function SearchForm({
   };
 
   const showResetButton = (searchQuery.trim() || hasResults) && onReset;
+  const canSaveByData = canSaveSearch || Boolean(searchQuery.trim());
+  const showSaveButton = onSaveSearch && canSaveByData;
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -75,16 +81,28 @@ export function SearchForm({
           </button>
         </div>
       </form>
-      {showResetButton && (
-        <div className="flex justify-center mt-4">
-          <button
-            onClick={onReset}
-            disabled={isLoading}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <X className="w-4 h-4" />
-            <span>Сбросить поиск</span>
-          </button>
+      {(showResetButton || showSaveButton) && (
+        <div className="flex flex-wrap justify-center gap-3 mt-4">
+          {showSaveButton && (
+            <button
+              onClick={onSaveSearch}
+              disabled={isLoading || !canSaveByData}
+              className="flex items-center gap-2 px-4 py-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <BookmarkPlus className="w-4 h-4" />
+              <span>Сохранить поиск</span>
+            </button>
+          )}
+          {showResetButton && (
+            <button
+              onClick={onReset}
+              disabled={isLoading}
+              className="flex items-center gap-2 px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              <X className="w-4 h-4" />
+              <span>Сбросить поиск</span>
+            </button>
+          )}
         </div>
       )}
     </div>
