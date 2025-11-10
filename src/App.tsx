@@ -39,10 +39,28 @@ function HomePage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Восстанавливаем поиск при загрузке страницы, если есть сохраненный запрос
+  useEffect(() => {
+    if (searchQuery.trim() && vacancies.length === 0 && !isLoading) {
+      // Небольшая задержка, чтобы убедиться, что все сторы загрузились
+      const timer = setTimeout(() => {
+        searchVacancies(searchQuery, 0);
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Запускаем только при монтировании компонента
+
   const handleReset = () => {
     setSearchQuery('');
     resetFilters();
     clearSearch();
+    // Очищаем localStorage при сбросе
+    try {
+      localStorage.removeItem('search-query-storage');
+    } catch (error) {
+      console.error('Ошибка при очистке поискового запроса:', error);
+    }
   };
 
   return (
