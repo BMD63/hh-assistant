@@ -143,7 +143,7 @@ export function SavedSearchesPage() {
         </div>
       )
     })
-  }, [savedSearches])
+  }, [savedSearches, handleApplySearch, handleDeleteSearch])
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
