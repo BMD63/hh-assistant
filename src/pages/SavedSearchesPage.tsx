@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Clock, Play, Trash2 } from 'lucide-react'
 import { useSavedSearchesStore } from '../stores/savedSearchesStore'
@@ -13,7 +13,7 @@ export function SavedSearchesPage() {
 
   const hasSavedSearches = savedSearches.length > 0
 
-  const handleApplySearch = (searchId: string) => {
+  const handleApplySearch = useCallback((searchId: string) => {
     const saved = savedSearches.find((item) => item.id === searchId)
     if (!saved) return
 
@@ -46,15 +46,15 @@ export function SavedSearchesPage() {
     useSearchStore.getState().setSearchQuery(query)
 
     navigate('/hh-assistant')
-  }
+  }, [navigate, savedSearches])
 
-  const handleDeleteSearch = (searchId: string) => {
+  const handleDeleteSearch = useCallback((searchId: string) => {
     removeSavedSearch(searchId)
-  }
+  }, [removeSavedSearch])
 
-  const handleClearAll = () => {
+  const handleClearAll = useCallback(() => {
     clearSavedSearches()
-  }
+  }, [clearSavedSearches])
 
   const savedSearchCards = useMemo(() => {
     return savedSearches.map((savedSearch) => {
