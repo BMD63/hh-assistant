@@ -137,7 +137,7 @@ function HomePage() {
 
   return (
     <>
-      <div className="text-center mb-8 w-full min-w-0">
+      <div className="text-center mb-8 w-full min-w-0 px-4 sm:px-0">
         <h2 className="text-4xl font-bold text-gray-900 mb-4">
           Найди свою идеальную вакансию
         </h2>
@@ -159,7 +159,7 @@ function HomePage() {
 
       {/* Кнопка открытия фильтров на мобилках */}
       {isMobile && (
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-6 px-4 sm:px-0">
           <button
             onClick={() => setIsFiltersOpen(true)}
             className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
@@ -170,53 +170,26 @@ function HomePage() {
         </div>
       )}
 
-      <div className="flex gap-8 w-full max-w-full mx-auto relative">
-        {/* Боковая панель с фильтрами */}
-        <div className={`
-          w-80 flex-shrink-0
-          ${isMobile ? `
-            fixed top-0 left-0 h-full bg-white z-50 shadow-2xl
-            transform transition-transform duration-300 ease-in-out
-            ${isFiltersOpen ? 'translate-x-0' : '-translate-x-full'}
-          ` : ''}
-        `}>
-          {/* Заголовок и кнопка закрытия на мобилках */}
-          {isMobile && (
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900">Фильтры</h3>
-              <button
-                onClick={() => setIsFiltersOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-600" />
-              </button>
+      <div className={`flex ${isMobile ? 'gap-0 px-4' : 'gap-8 px-0'} w-full max-w-full mx-auto relative`}>
+        {/* Боковая панель с фильтрами (только на десктопе) */}
+        {!isMobile && (
+          <div className="w-80 flex-shrink-0">
+            <div className=" space-y-4 ">
+              <IncludeExcludeFilter />
+              <SalaryFilter />
+              <ExperienceFilter />
+              <ScheduleFilter />
+              <AreaFilter />
+              <PeriodFilter />
+              <SortFilter />
             </div>
-          )}
-
-          {/* Контент фильтров */}
-          <div className={`space-y-4 ${isMobile ? 'p-4 h-[calc(100%-80px)] overflow-y-auto' : ''}`}>
-            <IncludeExcludeFilter />
-            <SalaryFilter />
-            <ExperienceFilter />
-            <ScheduleFilter />
-            <AreaFilter />
-            <PeriodFilter />
-            <SortFilter />
           </div>
-        </div>
-
-        {/* Overlay для мобилок */}
-        {isMobile && isFiltersOpen && (
-          <div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-40"
-            onClick={() => setIsFiltersOpen(false)}
-          />
         )}
 
         {/* Основной контент */}
         <div className={`flex-1 ${isMobile ? 'min-w-0' : ''}`}>
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mb-6 pt-0 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-red-800">{error}</p>
             </div>
           )}
@@ -256,6 +229,36 @@ function HomePage() {
           />
         </div>
       </div>
+
+      {/* Мобильная выезжающая панель фильтров + затемнение */}
+      {isMobile && isFiltersOpen && (
+        <>
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setIsFiltersOpen(false)}
+          />
+          <div className="fixed top-0 left-0 h-full w-80 bg-white z-50 shadow-2xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">Фильтры</h3>
+              <button
+                onClick={() => setIsFiltersOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <X className=" w-5 h-5 text-gray-600 " />
+              </button>
+            </div>
+            <div className="p-4 h-[calc(100%-80px)] overflow-y-auto">
+              <IncludeExcludeFilter />
+              <SalaryFilter />
+              <ExperienceFilter />
+              <ScheduleFilter />
+              <AreaFilter />
+              <PeriodFilter />
+              <SortFilter />
+            </div>
+          </div>
+        </>
+      )}
 
       <SaveSearchModal
         isOpen={isSaveModalOpen}
