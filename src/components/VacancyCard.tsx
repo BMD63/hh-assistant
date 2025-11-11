@@ -12,7 +12,7 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
   const isVacancyFavorite = isFavorite(vacancy.id)
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
-    e.preventDefault() // Предотвращаем переход по ссылке
+    e.preventDefault()
     e.stopPropagation()
     
     if (isVacancyFavorite) {
@@ -30,6 +30,13 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
     if (salary.to) parts.push(`до ${salary.to}`)
     
     return `${parts.join(' ')} ${salary.currency}`
+  }
+
+  // Преобразуем служебные теги HH <highlighttext> в <mark>
+  const toHighlightedHtml = (text: string) => {
+    return text
+      .replaceAll('<highlighttext>', '<mark class="bg-yellow-100 text-gray-900 px-0.5 rounded">')
+      .replaceAll('</highlighttext>', '</mark>')
   }
 
   const skills = vacancy.key_skills || []
@@ -78,9 +85,10 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
 
         {vacancy.snippet?.requirement && (
           <div className="mb-3">
-            <p className="text-sm text-gray-600 line-clamp-2">
-              {vacancy.snippet.requirement}
-            </p>
+            <p
+              className="text-sm text-gray-600 line-clamp-2"
+              dangerouslySetInnerHTML={{ __html: toHighlightedHtml(vacancy.snippet.requirement) }}
+            />
           </div>
         )}
 
