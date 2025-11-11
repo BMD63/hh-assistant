@@ -110,20 +110,20 @@ export function SavedSearchesPage() {
                 <span>Создан: {createdAtFormatted}</span>
               </div>
             </div>
-            <div className="flex flex-shrink-0 gap-2">
+            <div className="flex flex-shrink-0 gap-2 flex-wrap">
               <button
                 onClick={() => handleApplySearch(savedSearch.id)}
-                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex items-center gap-1 sm:gap-2 rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <Play className="h-4 w-4" />
-                Применить
+                <Play className="h-4 w-4 flex-shrink-0" />
+                <span>Применить</span>
               </button>
               <button
                 onClick={() => handleDeleteSearch(savedSearch.id)}
-                className="flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                className="flex items-center gap-1 sm:gap-2 rounded-lg border border-gray-300 px-3 sm:px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
               >
-                <Trash2 className="h-4 w-4" />
-                Удалить
+                <Trash2 className="h-4 w-4 flex-shrink-0" />
+                <span>Удалить</span>
               </button>
             </div>
           </div>
@@ -147,7 +147,7 @@ export function SavedSearchesPage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Сохраненные поиски</h1>
           <p className="mt-2 text-sm text-gray-600">
@@ -157,7 +157,7 @@ export function SavedSearchesPage() {
         {hasSavedSearches && (
           <button
             onClick={handleClearAll}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
+            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400 self-start sm:self-auto"
           >
             Очистить все
           </button>

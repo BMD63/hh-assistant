@@ -19,7 +19,7 @@ export function FavoritesPage() {
             Назад к поиску
           </Link>
           
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
                 <Heart className="w-8 h-8 text-red-500 mr-3 fill-red-500" />
@@ -36,10 +36,11 @@ export function FavoritesPage() {
             {favorites.length > 0 && (
               <button
                 onClick={clearFavorites}
-                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+                className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors self-start sm:self-auto"
               >
-                <Trash2 className="w-4 h-4 mr-2" />
-                Очистить все
+                <Trash2 className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Очистить все</span>
+                <span className="sm:hidden">Очистить</span>
               </button>
             )}
           </div>
