@@ -25,7 +25,7 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
   const formatSalary = (salary: Vacancy['salary']) => {
     if (!salary) return 'Зарплата не указана'
     
-    const parts = []
+    const parts: string[] = []
     if (salary.from) parts.push(`от ${salary.from}`)
     if (salary.to) parts.push(`до ${salary.to}`)
     
@@ -35,7 +35,7 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
   const skills = vacancy.key_skills || []
 
   return (
-    <Link to={`/hh-assistant/vacancy/${vacancy.id}`}>
+    <Link to={`/hh-assistant/vacancy/${vacancy.id}`} className="block">
       <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer relative">
         {/* Кнопка избранного */}
         <button
