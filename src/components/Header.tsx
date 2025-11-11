@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Heart, Bookmark } from 'lucide-react'
+import { Heart, Bookmark, Search } from 'lucide-react'
 import { useFavoritesStore } from '../stores/favoritesStore'
 import { useSavedSearchesStore } from '../stores/savedSearchesStore'
 
@@ -20,7 +20,11 @@ export function Header() {
             </Link>
           </div>
           <nav className="flex items-center space-x-6">
-            <Link to="/hh-assistant" className="text-gray-600 hover:text-gray-900 font-medium">
+            <Link 
+              to="/hh-assistant" 
+              className="flex items-center text-gray-600 hover:text-gray-900 font-medium"
+            >
+              <Search className="w-5 h-5 mr-1" />
               Поиск
             </Link>
             <Link 
