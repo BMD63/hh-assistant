@@ -4,6 +4,7 @@ import { Clock, Play, Trash2 } from 'lucide-react'
 import { useSavedSearchesStore } from '../stores/savedSearchesStore'
 import { useFiltersStore } from '../stores/filtersStore'
 import { useSearchStore } from '../stores/searchStore'
+import { Button } from '../components/Button'
 
 export function SavedSearchesPage() {
   const savedSearches = useSavedSearchesStore((state) => state.savedSearches)
@@ -111,20 +112,22 @@ export function SavedSearchesPage() {
               </div>
             </div>
             <div className="flex flex-shrink-0 gap-2 flex-wrap">
-              <button
+              <Button
+                view="blue"
+                size="md"
+                icon={<Play className="w-5 h-5" />} 
                 onClick={() => handleApplySearch(savedSearch.id)}
-                className="flex items-center gap-1 sm:gap-2 rounded-lg bg-blue-600 px-3 sm:px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <Play className="h-4 w-4 flex-shrink-0" />
-                <span>Применить</span>
-              </button>
-              <button
+                Применить
+              </Button>
+              <Button
+                view="outline"
+                size="md"
+                icon={<Trash2 className="w-5 h-5" />} 
                 onClick={() => handleDeleteSearch(savedSearch.id)}
-                className="flex items-center gap-1 sm:gap-2 rounded-lg border border-gray-300 px-3 sm:px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-400"
               >
-                <Trash2 className="h-4 w-4 flex-shrink-0" />
-                <span>Удалить</span>
-              </button>
+                Удалить
+              </Button>
             </div>
           </div>
           {badges.length > 0 && (
@@ -155,16 +158,16 @@ export function SavedSearchesPage() {
           </p>
         </div>
         {hasSavedSearches && (
-          <div className="w-full flex justify-center">
-            <button
-              onClick={handleClearAll}
-              className="flex items-center gap-3 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
-            >
-              <Trash2 className="w-5 h-5 align-middle" />
-              <span className="hidden sm:inline align-middle">Очистить все</span>
-              <span className="sm:hidden align-middle">Очистить</span>
-            </button>
-          </div>
+          <Button
+            view="red"
+            size="md"
+            className="mx-auto mt-2"
+            icon={<Trash2 className="w-5 h-5" />} 
+            onClick={handleClearAll}
+          >
+            <span className="hidden sm:inline">Очистить все</span>
+            <span className="sm:hidden">Очистить</span>
+          </Button>
         )}
       </div>
 

@@ -1,5 +1,6 @@
 import { Search, X, BookmarkPlus } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Button } from './Button'
 
 interface SearchFormProps {
   searchQuery: string;
@@ -84,24 +85,27 @@ export function SearchForm({
       {(showResetButton || showSaveButton) && (
         <div className="flex flex-wrap justify-center gap-3 mt-4">
           {showSaveButton && (
-            <button
+            <Button
+              view="blue"
+              size="md"
+              icon={<BookmarkPlus className="w-5 h-5" />} 
               onClick={onSaveSearch}
               disabled={isLoading || !canSaveByData}
-              className="flex items-center gap-2 px-4 py-2 text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              loading={isLoading}
             >
-              <BookmarkPlus className="w-4 h-4" />
-              <span>Сохранить поиск</span>
-            </button>
+              Сохранить поиск
+            </Button>
           )}
           {showResetButton && (
-            <button
+            <Button
+              view="outline"
+              size="md"
+              icon={<X className="w-5 h-5" />} 
               onClick={onReset}
               disabled={isLoading}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              <X className="w-4 h-4" />
-              <span>Сбросить поиск</span>
-            </button>
+              Сбросить поиск
+            </Button>
           )}
         </div>
       )}

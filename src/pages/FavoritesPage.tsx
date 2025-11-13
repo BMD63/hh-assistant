@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { ArrowLeft, Heart, Trash2 } from 'lucide-react'
 import { VacancyCard } from '../components/VacancyCard'
 import { useFavoritesStore } from '../stores/favoritesStore'
+import { Button } from '../components/Button'
 
 export function FavoritesPage() {
   const { favorites, clearFavorites } = useFavoritesStore()
@@ -34,16 +35,16 @@ export function FavoritesPage() {
             </div>
             
             {favorites.length > 0 && (
-              <div className="w-full flex justify-center">
-                <button
-                  onClick={clearFavorites}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
-                >
-                  <Trash2 className="w-5 h-5 align-middle" />
-                  <span className="hidden sm:inline align-middle">Очистить все</span>
-                  <span className="sm:hidden align-middle">Очистить</span>
-                </button>
-              </div>
+              <Button
+                view="red"
+                size="md"
+                className="mx-auto mt-2"
+                icon={<Trash2 className="w-5 h-5" />} 
+                onClick={clearFavorites}
+              >
+                <span className="hidden sm:inline">Очистить все</span>
+                <span className="sm:hidden">Очистить</span>
+              </Button>
             )}
           </div>
         </div>
