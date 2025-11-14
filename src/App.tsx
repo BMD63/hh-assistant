@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { Filter, X } from 'lucide-react'
 import { Header } from './components/Header'
@@ -42,6 +42,8 @@ function HomePage() {
   })));
   const resetFilters = useFiltersStore((state) => state.resetFilters);
   const addSavedSearch = useSavedSearchesStore((state) => state.addSavedSearch);
+
+  const hasRestoredSearch = useRef(false);
   
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -61,11 +63,13 @@ function HomePage() {
 
   // Восстанавливаем поиск при загрузке страницы, если есть сохраненный запрос
   useEffect(() => {
+    if (hasRestoredSearch.current) return;
     if (!searchQuery.trim()) return;
     if (isLoading || vacancies.length > 0) return;
 
     const timer = setTimeout(() => {
       searchVacancies(searchQuery, 0);
+      hasRestoredSearch.current = true;
     }, 100);
 
     return () => clearTimeout(timer);
