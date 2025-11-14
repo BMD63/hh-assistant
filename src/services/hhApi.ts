@@ -16,6 +16,12 @@ interface SearchParams {
   order_by?: string;
 }
 
+interface AreaNode {
+  id: string;
+  name?: string;
+  areas?: AreaNode[];
+}
+
 export class HHApiService {
   private async fetchAPI(endpoint: string, params: Record<string, string> = {}) {
     const url = new URL(`${API_BASE_URL}${endpoint}`);
@@ -63,6 +69,50 @@ export class HHApiService {
 
   async getVacancy(id: string) {
     return this.fetchAPI(`/vacancies/${id}`);
+  }
+
+  /**
+   * Fetch the list of areas and try to find an area id by a partial name match.
+   * Returns the first matched area's id or null if not found.
+   * The HH areas endpoint returns a nested tree, so we flatten it recursively.
+   */
+  async findAreaIdByName(name: string): Promise<string | null> {
+    if (!name || !name.trim()) return null;
+
+    const areas = await this.fetchAPI('/areas');
+
+    const needle = name.trim().toLowerCase();
+
+  const stack: AreaNode[] = Array.isArray(areas) ? ([...areas] as AreaNode[]) : [];
+
+    // DFS through the tree and try to find the best match
+  let bestMatch: { id: string; name?: string } | null = null;
+
+    while (stack.length > 0) {
+      const node = stack.pop();
+      if (!node) continue;
+
+      const nodeName = (node.name || '').toString().toLowerCase();
+      if (!nodeName) continue;
+
+      if (nodeName === needle) {
+        // exact match — return immediately
+        return node.id;
+      }
+
+      // prefer startsWith over contains
+      if (nodeName.startsWith(needle) && !bestMatch) {
+        bestMatch = { id: node.id, name: node.name };
+      } else if (nodeName.includes(needle) && !bestMatch) {
+        bestMatch = { id: node.id, name: node.name };
+      }
+
+      if (Array.isArray(node.areas)) {
+        for (const child of node.areas) stack.push(child);
+      }
+    }
+
+    return bestMatch ? bestMatch.id : null;
   }
 }
 
