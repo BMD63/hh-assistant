@@ -21,7 +21,6 @@ import { useFiltersStore } from './stores/filtersStore'
 import { SaveSearchModal } from './components/SaveSearchModal'
 import { useSavedSearchesStore } from './stores/savedSearchesStore'
 import { useShallow } from 'zustand/react/shallow'
-import { Navigate } from 'react-router-dom'
 
 function HomePage() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore, clearSearch } = useVacancies();
@@ -282,13 +281,11 @@ function App() {
       <Header />
       <main className="w-full max-w-full px-4 py-8">
         <Routes>
-          {/* 🔥 ДОБАВЛЯЕМ РЕДИРЕКТЫ СО СТАРЫХ ПУТЕЙ */}
-          <Route path="/hh-assistant" element={<Navigate to="/" replace />} />
-          <Route path="/hh-assistant/vacancy/:id" element={<Navigate to="/vacancy/:id" replace />} />
-          <Route path="/hh-assistant/favorites" element={<Navigate to="/favorites" replace />} />
-          <Route path="/hh-assistant/saved-searches" element={<Navigate to="/saved-searches" replace />} />
-          
-          {/* ОСНОВНЫЕ МАРШРУТЫ */}
+          <Route path="/hh-assistant" element={<HomePage />} />
+          <Route path="/hh-assistant/vacancy/:id" element={<VacancyPage />} />
+          <Route path="/hh-assistant/favorites" element={<FavoritesPage />} />
+          <Route path="/hh-assistant/saved-searches" element={<SavedSearchesPage />} />
+          {/* Резервные маршруты */}
           <Route path="/" element={<HomePage />} />
           <Route path="/vacancy/:id" element={<VacancyPage />} />
           <Route path="/favorites" element={<FavoritesPage />} />
