@@ -15,13 +15,13 @@ export function Header() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">HH</span>
             </div>
-            <Link to="/hh-assistant" className="text-xl sm:text-2xl font-bold text-gray-900 hover:text-gray-700 whitespace-nowrap">
+            <Link to="/" className="text-xl sm:text-2xl font-bold text-gray-900 hover:text-gray-700 whitespace-nowrap">
               HH Assistant
             </Link>
           </div>
           <nav className="flex items-center gap-2 sm:gap-4 md:gap-6 flex-shrink-0">
             <Link 
-              to="/hh-assistant" 
+              to="/" 
               className="flex items-center text-gray-600 hover:text-gray-900 font-medium whitespace-nowrap"
               title="Поиск"
             >
@@ -29,7 +29,7 @@ export function Header() {
               <span className="hidden sm:inline">Поиск</span>
             </Link>
             <Link 
-              to="/hh-assistant/favorites" 
+              to="/favorites" 
               className="flex items-center text-gray-600 hover:text-gray-900 font-medium relative whitespace-nowrap"
               title="Избранное"
             >
@@ -42,7 +42,7 @@ export function Header() {
               )}
             </Link>
             <Link 
-              to="/hh-assistant/saved-searches" 
+              to="/saved-searches" 
               className="flex items-center text-gray-600 hover:text-gray-900 font-medium relative whitespace-nowrap"
               title="Сохраненные поиски"
             >

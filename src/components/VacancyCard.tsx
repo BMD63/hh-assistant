@@ -42,7 +42,7 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
   const skills = vacancy.key_skills || []
 
   return (
-    <Link to={`/hh-assistant/vacancy/${vacancy.id}`} className="block">
+    <Link to={`/vacancy/${vacancy.id}`} className="block">
       <div className="bg-white rounded-lg border border-gray-200 p-6 hover:shadow-md transition-shadow cursor-pointer relative">
         {/* Кнопка избранного */}
         <button
