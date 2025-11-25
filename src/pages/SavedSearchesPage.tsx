@@ -41,6 +41,7 @@ export function SavedSearchesPage() {
         employment: false,
         period: false,
         sort: false,
+        sources: false,
       },
     }))
 
