@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { Vacancy } from '../types/vacancy';
 
 interface FiltersState {
   // === ПОИСК И РЕЗУЛЬТАТЫ ===
   searchQuery: string;
-  searchResults: any[];
+  searchResults: Vacancy[];
   isLoading: boolean;
   error: string | null;
   hasMore: boolean;
@@ -36,7 +37,7 @@ interface FiltersState {
   // === ACTIONS ===
   // Новые actions для поиска
   setSearchQuery: (query: string) => void;
-  setSearchResults: (results: any[]) => void;
+  setSearchResults: (results: Vacancy[]) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   setHasMore: (hasMore: boolean) => void;

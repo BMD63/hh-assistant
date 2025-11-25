@@ -3,13 +3,27 @@ import { zarplataApiService, type ZarplataVacancy } from './zarplataApi';
 import type { Vacancy } from '../types/vacancy';
 import { useSearchSourcesStore } from '../stores/searchSourcesStore';
 
+interface SearchFilters {
+  searchQuery: string;
+  includeTerms: string[];
+  excludeTerms: string[];
+  experience: string[];
+  salaryFrom: number | null;
+  salaryTo: number | null;
+  schedule: string[];
+  area: string;
+  period: number | null;
+  sortBy: string;
+}
+
 // Конвертируем вакансии Zarplata в общий формат
 function convertZarplataVacancy(vacancy: ZarplataVacancy): Vacancy {
-
-  const safeString = (value: any): string => {
+  const safeString = (value: unknown): string => {
     if (!value) return 'Не указано';
     if (typeof value === 'string') return value;
-    if (typeof value === 'object' && value.name) return String(value.name);
+    if (typeof value === 'object' && value !== null && 'name' in value) {
+      return String((value as { name: string }).name);
+    }
     return String(value);
   };
 
@@ -57,13 +71,13 @@ function convertZarplataVacancy(vacancy: ZarplataVacancy): Vacancy {
 }
 
 // Конвертируем параметры фильтров для Zarplata API
-function convertFiltersToZarplataParams(filters: any) {
+function convertFiltersToZarplataParams(filters: SearchFilters) {
   return {
     text: filters.searchQuery,
     salary_from: filters.salaryFrom || undefined,
     salary_to: filters.salaryTo || undefined,
     experience: filters.experience?.[0] || undefined,
-    employment: filters.employment?.[0] || undefined,
+    employment: undefined, // Zarplata не поддерживает employment фильтр
     schedule: filters.schedule?.[0] || undefined,
     area: filters.area !== '113' ? filters.area : undefined,
   };
@@ -73,7 +87,7 @@ export class VacancyService {
   async searchVacancies(
     query: string,
     page: number = 0,
-    filters: any
+    filters: SearchFilters
   ): Promise<{ vacancies: Vacancy[]; hasMore: boolean }> {
     const sources = useSearchSourcesStore.getState().sources;
     const results: Vacancy[] = [];
@@ -82,8 +96,19 @@ export class VacancyService {
     // Поиск в HH.ru
     if (sources.hh) {
       try {
+        // Формируем поисковый запрос с учетом фильтров для HH
+        let hhSearchText = query;
+        if (filters.includeTerms.length > 0) {
+          hhSearchText += ` ${filters.includeTerms.join(' ')}`;
+        }
+        if (filters.excludeTerms.length > 0) {
+          filters.excludeTerms.forEach(term => {
+            hhSearchText += ` !${term}`;
+          });
+        }
+
         const hhResult = await hhApiService.searchVacancies({
-          text: query,
+          text: hhSearchText,
           page,
           per_page: 20,
           salary: filters.salaryFrom || undefined,
@@ -109,29 +134,49 @@ export class VacancyService {
 
     // Поиск в Zarplata.ru
     if (sources.zarplata) {
-      try {
-        const zarplataQuery = query.replace(/!\w+/g, '').trim();
-        const zarplataParams = convertFiltersToZarplataParams({
-          ...filters,
-          searchQuery: zarplataQuery
-        });
+        try {
+            // Формируем поисковый запрос с include/exclude terms для Zarplata
+            // Сначала очищаем от HH-синтаксиса (!term)
+            let zarplataQuery = query.replace(/!\w+/g, '').trim();
+            
+            // Добавляем include terms
+            if (filters.includeTerms.length > 0) {
+            zarplataQuery += ` ${filters.includeTerms.join(' ')}`;
+            }
+            
+            // Добавляем exclude terms (Zarplata использует минус для исключения)
+            if (filters.excludeTerms.length > 0) {
+            filters.excludeTerms.forEach(term => {
+                zarplataQuery += ` -${term}`;
+            });
+            }
 
-        console.log('🔍 Zarplata API params:', zarplataParams);
+            // УДАЛЯЕМ ДУБЛИКАТЫ СЛОВ из запроса
+            const words = zarplataQuery.split(/\s+/);
+            const uniqueWords = [...new Set(words)];
+            zarplataQuery = uniqueWords.join(' ').trim();
 
-        const zarplataResult = await zarplataApiService.searchVacancies({
-          ...zarplataParams,
-          page: page + 1, // Zarplata pages start from 1
-          per_page: 20
-        });
+            const zarplataParams = convertFiltersToZarplataParams({
+            ...filters,
+            searchQuery: zarplataQuery
+            });
 
-        console.log('🔍 Zarplata API response:', zarplataResult);
+            console.log('🔍 Zarplata API params:', zarplataParams);
 
-        const zarplataVacancies = zarplataResult.items.map(convertZarplataVacancy);
-        results.push(...zarplataVacancies);
-        hasMore = hasMore || (zarplataResult.page < zarplataResult.pages);
-      } catch (error) {
-        console.error('Zarplata.ru search error:', error);
-      }
+            const zarplataResult = await zarplataApiService.searchVacancies({
+            ...zarplataParams,
+            page: page + 1,
+            per_page: 20
+            });
+
+            console.log('🔍 Zarplata API response:', zarplataResult);
+
+            const zarplataVacancies = zarplataResult.items.map(convertZarplataVacancy);
+            results.push(...zarplataVacancies);
+            hasMore = hasMore || (zarplataResult.page < zarplataResult.pages);
+        } catch (error) {
+            console.error('Zarplata.ru search error:', error);
+        }
     }
 
     // Сортируем результаты по релевантности (можно улучшить)

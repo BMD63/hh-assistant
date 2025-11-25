@@ -1,4 +1,3 @@
-// src/services/zarplataApi.ts
 export interface ZarplataVacancy {
   id: string;
   name: string;
@@ -54,23 +53,66 @@ export class ZarplataApiService {
     if (params.schedule) searchParams.append('schedule', params.schedule);
     if (params.area) searchParams.append('area', params.area);
 
-    const response = await fetch(`${this.API_BASE_URL}?${searchParams.toString()}`);
+    // Добавляем параметры для JSON ответа
+    searchParams.append('enable_snippets', 'true');
+    
+    const url = `${this.API_BASE_URL}?${searchParams.toString()}`;
+    console.log('🔍 Zarplata API URL:', url);
+
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'HH-Assistant/1.0',
+        'Content-Type': 'application/json'
+      }
+    });
     
     if (!response.ok) {
       throw new Error(`Zarplata API error: ${response.status}`);
     }
 
-    return response.json();
+    // Проверим content-type ответа
+    const contentType = response.headers.get('content-type');
+    console.log('🔍 Zarplata Response Content-Type:', contentType);
+
+    const responseText = await response.text();
+    console.log('🔍 Zarplata Response (first 500 chars):', responseText.substring(0, 500));
+
+    try {
+      const data = JSON.parse(responseText);
+      console.log('🔍 Zarplata Parsed JSON:', data);
+      return data;
+    } catch {
+      console.error('❌ Zarplata API returned non-JSON response');
+      console.error('🔍 Full response:', responseText);
+      throw new Error('Zarplata API returned HTML instead of JSON');
+    }
   }
 
   async getVacancy(id: string): Promise<ZarplataVacancy> {
-    const response = await fetch(`${this.API_BASE_URL}/${id}`);
+    const url = `${this.API_BASE_URL}/${id}`;
+    console.log('🔍 Zarplata Get Vacancy URL:', url);
+
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'User-Agent': 'HH-Assistant/1.0'
+      }
+    });
     
     if (!response.ok) {
       throw new Error(`Zarplata API error: ${response.status}`);
     }
 
-    return response.json();
+    const responseText = await response.text();
+    console.log('🔍 Zarplata Vacancy Response:', responseText.substring(0, 500));
+
+    try {
+      return JSON.parse(responseText);
+    } catch {
+      console.error('❌ Zarplata Vacancy API returned non-JSON response');
+      throw new Error('Zarplata Vacancy API returned HTML instead of JSON');
+    }
   }
 }
 
