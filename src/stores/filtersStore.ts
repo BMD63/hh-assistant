@@ -2,31 +2,26 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface FiltersState {
-  // Текстовые фильтры
+  // === ПОИСК И РЕЗУЛЬТАТЫ ===
+  searchQuery: string;
+  searchResults: any[];
+  isLoading: boolean;
+  error: string | null;
+  hasMore: boolean;
+
+  // === ФИЛЬТРЫ ===
   includeTerms: string[];
   excludeTerms: string[];
-  
-  // Опыт работы
   experience: string[];
-  
-  // Зарплата
   salaryFrom: number | null;
   salaryTo: number | null;
   salaryCurrency: string;
-  
-  // Тип занятости
   employment: string[];
-  
-  // График работы
   schedule: string[];
-  
-  // Город
   area: string;
-  
-  // Период публикации
   period: number | null;
+  sortBy: string;
   
-  // Состояние раскрытия фильтров
   expandedFilters: {
     experience: boolean;
     schedule: boolean;
@@ -35,12 +30,18 @@ interface FiltersState {
     employment: boolean;
     period: boolean;
     sort: boolean;
+    sources: boolean; // ← ДОБАВЛЯЕМ sources
   };
 
-  // Сортировка
-  sortBy: string;
+  // === ACTIONS ===
+  // Новые actions для поиска
+  setSearchQuery: (query: string) => void;
+  setSearchResults: (results: any[]) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  setHasMore: (hasMore: boolean) => void;
   
-  // Actions
+  // Существующие actions для фильтров
   addIncludeTerm: (term: string) => void;
   removeIncludeTerm: (term: string) => void;
   addExcludeTerm: (term: string) => void;
@@ -61,7 +62,14 @@ interface FiltersState {
 export const useFiltersStore = create<FiltersState>()(
   persist(
     (set) => ({
-      // Initial state
+      // === ПОИСК И РЕЗУЛЬТАТЫ ===
+      searchQuery: '',
+      searchResults: [],
+      isLoading: false,
+      error: null,
+      hasMore: false,
+
+      // === ФИЛЬТРЫ ===
       includeTerms: [],
       excludeTerms: [],
       experience: [],
@@ -74,7 +82,7 @@ export const useFiltersStore = create<FiltersState>()(
       period: null,
       sortBy: 'relevance',
       
-      // Раскрытые фильтры
+      // === РАСКРЫТЫЕ ФИЛЬТРЫ (ДОБАВЛЯЕМ sources) ===
       expandedFilters: {
         experience: false,
         schedule: false, 
@@ -83,9 +91,16 @@ export const useFiltersStore = create<FiltersState>()(
         employment: false,
         period: false,
         sort: false,
+        sources: false, // ← ДОБАВЛЯЕМ ЗДЕСЬ
       },
       
-      // Actions
+      // === ACTIONS ===
+      setSearchQuery: (searchQuery) => set({ searchQuery }),
+      setSearchResults: (searchResults) => set({ searchResults }),
+      setLoading: (isLoading) => set({ isLoading }),
+      setError: (error) => set({ error }),
+      setHasMore: (hasMore) => set({ hasMore }),
+      
       addIncludeTerm: (term) => 
         set((state) => ({ 
           includeTerms: [...state.includeTerms, term.trim()] 
@@ -151,25 +166,12 @@ export const useFiltersStore = create<FiltersState>()(
           employment: false,
           period: false,
           sort: false,
+          sources: false, // ← И ЗДЕСЬ
         },
       }),
     }),
     {
-      name: 'filters-storage', // ключ в localStorage
-      // Исключаем expandedFilters из сохранения, так как это UI состояние
-      partialize: (state) => ({
-        includeTerms: state.includeTerms,
-        excludeTerms: state.excludeTerms,
-        experience: state.experience,
-        salaryFrom: state.salaryFrom,
-        salaryTo: state.salaryTo,
-        salaryCurrency: state.salaryCurrency,
-        employment: state.employment,
-        schedule: state.schedule,
-        area: state.area,
-        period: state.period,
-        sortBy: state.sortBy,
-      }),
+      name: 'filters-storage',
     }
   )
 );

@@ -11,6 +11,11 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
   const { addToFavorites, removeFromFavorites, isFavorite } = useFavoritesStore()
   const isVacancyFavorite = isFavorite(vacancy.id)
 
+  console.log('🔍 Vacancy data:', vacancy)
+  console.log('🔍 Experience:', vacancy.experience)
+  console.log('🔍 Area:', vacancy.area)
+  console.log('🔍 Employer:', vacancy.employer)
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -70,17 +75,17 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
         
         <div className="flex items-center text-gray-600 mb-2">
           <Building className="w-4 h-4 mr-2" />
-          <span>{vacancy.employer.name}</span>
+          <span>{vacancy.employer?.name || 'Работодатель не указан'}</span>
         </div>
         
         <div className="flex items-center text-gray-600 mb-2">
           <MapPin className="w-4 h-4 mr-2" />
-          <span>{vacancy.area.name}</span>
+          <span>{vacancy.area?.name || 'Город не указан'}</span>
         </div>
         
         <div className="flex items-center text-gray-600 mb-3">
           <Calendar className="w-4 h-4 mr-2" />
-          <span>{vacancy.experience.name}</span>
+           <span>(vacancy.experience?.name || 'Опыт не указан')</span>
         </div>
 
         {vacancy.snippet?.requirement && (
@@ -108,6 +113,15 @@ export function VacancyCard({ vacancy }: VacancyCardProps) {
               </span>
             )}
           </div>
+        )}
+        {vacancy.source && (
+          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+            vacancy.source === 'hh' 
+              ? 'bg-blue-100 text-blue-800' 
+              : 'bg-green-100 text-green-800'
+          }`}>
+            {vacancy.source === 'hh' ? 'HH.ru' : 'Zarplata.ru'}
+          </span>
         )}
       </div>
     </Link>

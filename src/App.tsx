@@ -21,6 +21,7 @@ import { useFiltersStore } from './stores/filtersStore'
 import { SaveSearchModal } from './components/SaveSearchModal'
 import { useSavedSearchesStore } from './stores/savedSearchesStore'
 import { useShallow } from 'zustand/react/shallow'
+import { SourceFilter } from './components/SourceFilter'
 
 function HomePage() {
   const { vacancies, isLoading, error, hasMore, searchVacancies, loadMore, clearSearch } = useVacancies();
@@ -179,6 +180,7 @@ function HomePage() {
         {!isMobile && (
           <div className="w-80 flex-shrink-0">
             <div className=" space-y-4 ">
+              <SourceFilter />
               <IncludeExcludeFilter />
               <SalaryFilter />
               <ExperienceFilter />

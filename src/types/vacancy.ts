@@ -53,6 +53,8 @@ export interface Address {
   }>;
 }
 
+export type VacancySource = 'hh' | 'zarplata';
+
 export interface Vacancy {
   id: string;
   name: string;
@@ -87,8 +89,13 @@ export interface Vacancy {
   alternate_url: string;
   contacts?: Contact;
   address?: Address;
+  source?: VacancySource;
 }
 
+export interface SearchSources {
+  hh: boolean;
+  zarplata: boolean;
+}
 export interface VacanciesResponse {
   items: Vacancy[];
   found: number;

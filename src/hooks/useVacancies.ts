@@ -1,102 +1,96 @@
-import { useState, useEffect, useCallback } from 'react';
-import type { Vacancy } from '../types/vacancy';
-import { hhApiService } from '../services/hhApi';
-import { buildSearchQuery } from '../utils/searchQueryBuilder';
+// src/hooks/useVacancies.ts
+import { useCallback } from 'react';
 import { useFiltersStore } from '../stores/filtersStore';
+import { vacancyService } from '../services/vacancyService';
 
 export function useVacancies() {
-  const [vacancies, setVacancies] = useState<Vacancy[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [currentQuery, setCurrentQuery] = useState('');
+  const { 
+    searchResults, 
+    setSearchResults, 
+    isLoading, 
+    setLoading, 
+    error, 
+    setError, 
+    hasMore, 
+    setHasMore,
+    searchQuery,
+    includeTerms,
+    excludeTerms,
+    experience,
+    salaryFrom,
+    salaryTo, 
+    schedule,
+    area,
+    period,
+    sortBy
+  } = useFiltersStore();
 
-  const { includeTerms, excludeTerms, experience, salaryFrom, salaryTo, employment, schedule, area, period, sortBy } = useFiltersStore();
-
-  const searchVacancies = useCallback(async (baseQuery: string, page: number = 0) => {
-    if (!baseQuery.trim()) return;
+  const searchVacancies = useCallback(async (query: string, page: number = 0) => {
+    if (!query.trim()) return;
     
-    setIsLoading(true);
+    setLoading(true);
     setError(null);
     
     try {
-      const finalQuery = buildSearchQuery(baseQuery, includeTerms, excludeTerms);
-      
-      const experienceParam = experience.length > 0 ? experience[0] : undefined;
-      const employmentParam = employment.length > 0 ? employment[0] : undefined;
-      const scheduleParam = schedule.length > 0 ? schedule[0] : undefined;
-      
-      const response = await hhApiService.searchVacancies({
-        text: finalQuery,
-        page,
-        per_page: 20,
-        salary: salaryFrom || undefined,
-        salary_to: salaryTo || undefined,
-        experience: experienceParam,
-        employment: employmentParam,
-        schedule: scheduleParam,
-        area: area !== '113' ? area : undefined,
-        period: period || undefined,
-        order_by: sortBy, 
-      });
-      
-      if (response && response.items) {
-        if (page === 0) {
-          setVacancies(response.items);
-          setCurrentQuery(baseQuery);
-        } else {
-          setVacancies(prev => [...prev, ...response.items]);
-        }
-        
-        setHasMore(page < response.pages - 1);
-        setCurrentPage(page);
+      // Формируем поисковый запрос с учетом фильтров
+      let searchText = query;
+      if (includeTerms.length > 0) {
+        searchText += ` ${includeTerms.join(' ')}`;
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Ошибка при поиске вакансий');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [
-  includeTerms, 
-  excludeTerms, 
-  experience, 
-  salaryFrom, 
-  salaryTo, 
-  employment, 
-  schedule, 
-  area,
-  period,       
-  sortBy        
-]);
+      if (excludeTerms.length > 0) {
+        excludeTerms.forEach(term => {
+          searchText += ` !${term}`;
+        });
+      }
 
-  // Автоматический поиск при изменении фильтров
-  useEffect(() => {
-    if (currentQuery) {
-      searchVacancies(currentQuery, 0);
+      const filters = {
+        searchQuery: searchText,
+        includeTerms,
+        excludeTerms,
+        experience,
+        salaryFrom,
+        salaryTo,
+        schedule,
+        area,
+        period,
+        sortBy
+      };
+
+      const result = await vacancyService.searchVacancies(searchText, page, filters);
+      
+      if (page === 0) {
+        setSearchResults(result.vacancies);
+      } else {
+        setSearchResults([...searchResults, ...result.vacancies]);
+      }
+      
+      setHasMore(result.hasMore);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Ошибка поиска');
+    } finally {
+      setLoading(false);
     }
   }, [
-  currentQuery, 
-  searchVacancies, 
-  area,
-  period,        
-  sortBy         
-]); 
-  const loadMore = () => {
-    if (!hasMore || isLoading || !currentQuery) return;
-    searchVacancies(currentQuery, currentPage + 1);
-  };
+    includeTerms, excludeTerms, experience, salaryFrom, salaryTo, 
+    schedule, area, period, sortBy, setLoading, setError, 
+    setSearchResults, setHasMore, searchResults
+  ]);
+
+  const loadMore = useCallback(() => {
+    if (!isLoading && hasMore) {
+      const currentPage = Math.floor(searchResults.length / 20);
+      searchVacancies(searchQuery, currentPage);
+    }
+  }, [isLoading, hasMore, searchResults.length, searchVacancies, searchQuery]);
 
   const clearSearch = useCallback(() => {
-    setVacancies([]);
-    setCurrentQuery('');
-    setCurrentPage(0);
-    setHasMore(true);
+    setSearchResults([]);
+    setHasMore(false);
     setError(null);
-  }, []);
+  }, [setSearchResults, setHasMore, setError]);
 
   return {
-    vacancies,
+    vacancies: searchResults,
     isLoading,
     error,
     hasMore,

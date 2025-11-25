@@ -2,8 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, MapPin, Building, Calendar, DollarSign, Clock } from 'lucide-react';
 import type { Vacancy } from '../types/vacancy';
-import { hhApiService } from '../services/hhApi';
-
+import { vacancyService } from '../services/vacancyService';
 export function VacancyPage() {
   const { id } = useParams<{ id: string }>();
   const [vacancy, setVacancy] = useState<Vacancy | null>(null);
@@ -18,7 +17,7 @@ export function VacancyPage() {
       setError(null);
       
       try {
-        const vacancyData = await hhApiService.getVacancy(id);
+        const vacancyData = await vacancyService.getVacancy(id);
         setVacancy(vacancyData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Ошибка загрузки вакансии');
@@ -178,7 +177,7 @@ export function VacancyPage() {
               Откликнуться на вакансию
             </a>
             <p className="text-sm text-gray-500 mt-2">
-              Отклик откроется на официальном сайте HH.ru
+              Отклик откроется на официальном сайте {vacancy.source === 'zarplata' ? 'Zarplata.ru' : 'HH.ru'}
             </p>
           </div>
         </div>
